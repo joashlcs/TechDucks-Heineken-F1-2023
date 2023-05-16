@@ -1,4 +1,4 @@
-<template>
+<template id="app">
   <RouterView />
 </template>
 
@@ -8,6 +8,6 @@ import { RouterView } from 'vue-router'
 
 <style>
 #app {
-  margin-top: 60px
+  margin-top: 0px
 }
 </style>

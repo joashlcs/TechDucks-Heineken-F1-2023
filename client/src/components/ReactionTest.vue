@@ -2,6 +2,9 @@
   <div class="d-flex justify-content-center align-items-center logo">
     <img class="fit-picture" src="../assets/heineken.png"/>
   </div>
+  <div class="d-flex justify-content-center align-items-center">
+    <p>Tap click when you're ready to race, then tap again when the lights go out.</p>
+  </div>
   <div v-if="jumpStart" class="d-flex justify-content-center align-items-center multiplier-2">
     <div class="background-heineken-red pop-up-notice">JUMP START!</div>
   </div>
@@ -18,18 +21,16 @@
     <div class="mb-4">
       <div class="row">
         <div class="col-12 player-info">
-          <div>
-            <div>Time: {{ timediff }}</div>
-            <div>Best Time: {{ bestTime }}</div>
-          </div>
+          <div>Time: {{ timediff }}</div>
+          <div>Best Time: {{ bestTime }}</div>
         </div>
       </div>
     </div>
     <div class="mb-3">
       <div class="row">
         <div class="col-12">
-          <button v-if="!raceStarted" @click="startRace" class="btn btn-heineken background-heineken-green btn-lg m-3">Start Race</button>
-          <button v-else @click="finishRace" class="btn btn-heineken background-heineken-red btn-lg m-3">Finish Race</button>
+          <button id="button" :disabled="retryCounter >= 3" v-if="!raceStarted" @click="startRace" class="btn btn-heineken background-heineken-green btn-lg m-3">Start Race</button>
+          <button id="button" v-else @click="finishRace" class="btn btn-heineken background-heineken-red btn-lg m-3">Finish Race</button>
         </div>
       </div>
     </div>
@@ -47,12 +48,18 @@ export default {
       startTime: null,
       timediff: null,
       bestTime: null,
+      retryCounter: 0,
     };
   },
   methods: {
     startRace() {
-      this.jumpStart = false
+      console.log(this.retryCounter)
+      this.jumpStart = false;
       this.raceStarted = true;
+
+      if (this.retryCounter < 3) {
+        this.retryCounter += 1;
+      }
 
       setTimeout(() => {
         if (!this.raceStarted) return;
