@@ -51,7 +51,7 @@ def delete_request():
     print(response.json())
 
 def db_request():
-    url = "http://127.0.0.1:5000/qrcode"
+    url = "http://127.0.0.1:5000/data"
 
     # set the JSON req payload
     payload = {
@@ -60,13 +60,17 @@ def db_request():
         "DOB": 11022003,
         "Contact": 91500846,
         "Email": "joashlaw75@gmail.com"
-
     }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
     # convert the payload to a JSON string
     json_payload = json.dumps(payload)
 
 # send the POST request with the JSON payload
-    response = requests.post(url, data=json_payload)
+    response = requests.post(url, data=json_payload, headers=headers)
 
     status_code = response.status_code
     content = response.content
@@ -137,5 +141,5 @@ def db_request():
 
 if __name__ == '__main__':
     # print(post_request())
-    print(delete_request())
+    print(db_request())
 

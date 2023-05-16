@@ -86,34 +86,40 @@ def single_book(book_id):
         response_object['message'] = 'Book removed!'
     return jsonify(response_object)
 
-
-
-
-
-
 client = MongoClient('mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.2')  # Establish a connection to the MongoDB server
 db = client['clientbase']  #database
-print(client.list_database_names())
+# print(client.list_database_names())
 collection = db['users']  #db.users
 
-@app.route('/qrcode', methods=['GET'])
-def check_qr_code():
-    qr_code = request.args.get('code')
+# @app.route('/qrcode', methods=['GET'])
+# def check_qr_code():
+#     qr_code = request.args.get('code')
+#
+#     # Query the database
+#     result = collection.find_one({'code': qr_code})
+#
+#     if result:
+#         # QR code exists
+#         response = {"exists": True}
+#         print("It exists, hooray")
+#     else:
+#         # QR code does not exist
+#         response = {"exists": False}
+#         collection.insert_one(qr_code)
+#         print("Nope. Not existing")
+#
+#     return jsonify(response)
 
-    # Query the database
-    result = collection.find_one({'code': qr_code})
 
-    if result:
-        # QR code exists
-        response = {"exists": True}
-        print("It exists, hooray")
-    else:
-        # QR code does not exist
-        response = {"exists": False}
-        collection.insert_one(qr_code)
-        print("Nope. Not existing")
+@app.route("/data", methods=["POST"])
+def store_data():
+    data = request.get_json()
+    # data = request.json  # Assuming data is sent as JSON in the request body
 
-    return jsonify(response)
+    # Insert data into MongoDB
+    collection.insert_one(data)
+
+    return "Data stored successfully!"
 
 
 if __name__ == '__main__':

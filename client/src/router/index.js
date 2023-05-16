@@ -3,6 +3,7 @@ import Books from '../components/Books.vue'
 import LandingPage from "@/components/LandingPage.vue";
 import Video from "@/components/Video.vue";
 import reactionTest from "@/components/ReactionTest.vue";
+import FirstBeer from "@/components/FirstBeer.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,10 +24,23 @@ const router = createRouter({
       component: Video
     },
     {
-      path: '/reactiontest',
+      path: '/reactiontest/:id',
       name: 'reactiontest',
       component: reactionTest
-    }
+    },
+    {
+      path: '/firstbeer/:id/:result',
+      name: 'firstbeer',
+      component: FirstBeer
+    },
+    {
+    meta: {
+      title: "Details",
+    },
+    path: "/management/details/:id",
+    name: "details",
+    component: () => import("@/views/Details.vue"),
+  },
   ]
 })
 

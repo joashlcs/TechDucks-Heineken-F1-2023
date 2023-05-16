@@ -29,11 +29,11 @@ export default {
           return;
         }
         this.scanner = new QrScanner(video, result => {
-          this.qrResult = result;
+          this.qrResult = result.data;
           this.stopScan();
-          if (result.data === 'https://www.google.com') {
+          if (result.data === '12345678') {
             // Require API request to see if user is first timer (API should return if QR code is new [TRUE] or old [False])
-            this.$router.push('/reactiontest');
+            this.$router.push(`/reactiontest/${result.data}`);
           }
         }, { returnDetailedScanResult: true });
         this.scanner.start();

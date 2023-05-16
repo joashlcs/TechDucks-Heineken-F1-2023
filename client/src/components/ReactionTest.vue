@@ -1,9 +1,10 @@
 <template>
   <div class="d-flex justify-content-center align-items-center logo">
-    <img class="fit-picture" src="../assets/heineken.png"/>
+    <img class="fit-picture" src="../assets/heineken.png" alt="logo"/>
   </div>
-  <div class="d-flex justify-content-center align-items-center">
+  <div class="d-flex justify-content-center align-items-center col">
     <p>Tap click when you're ready to race, then tap again when the lights go out.</p>
+    <p>Attempts Left {{ 3-retryCounter }}</p>
   </div>
   <div v-if="jumpStart" class="d-flex justify-content-center align-items-center multiplier-2">
     <div class="background-heineken-red pop-up-notice">JUMP START!</div>
@@ -49,17 +50,22 @@ export default {
       timediff: null,
       bestTime: null,
       retryCounter: 0,
+      userid: null,
     };
+  },
+  created() {
+    const resultData = this.$route.params.id;
+    this.userid = resultData;
+    console.log(`User ID: ${resultData}`);
   },
   methods: {
     startRace() {
-      console.log(this.retryCounter)
+      this.timediff = null;
       this.jumpStart = false;
       this.raceStarted = true;
 
-      if (this.retryCounter < 3) {
-        this.retryCounter += 1;
-      }
+      this.retryCounter += 1;
+      console.log(this.retryCounter)
 
       setTimeout(() => {
         if (!this.raceStarted) return;
@@ -108,6 +114,18 @@ export default {
         this.startTime = null;
         if (this.bestTime === null || timeDiff < this.bestTime) {
           this.bestTime = timeDiff;
+        }
+      }
+      if (this.retryCounter === 3) {
+        if (this.bestTime <= 0.6 && this.bestTime !== null) {
+          console.log(this.bestTime)
+          const status = "passed";
+          this.$router.push(`/firstbeer/${this.userid}/${status}`);
+        }
+        else {
+          console.log(this.bestTime)
+          const status = "failed";
+          this.$router.push(`/firstbeer/${this.userid}/${status}`);
         }
       }
     },
