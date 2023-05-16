@@ -50,6 +50,30 @@ def delete_request():
     # Print the response
     print(response.json())
 
+def db_request():
+    url = "http://127.0.0.1:5000/qrcode"
+
+    # set the JSON req payload
+    payload = {
+        "FirstName": "Joash",
+        "LastName": "Law",
+        "DOB": 11022003,
+        "Contact": 91500846,
+        "Email": "joashlaw75@gmail.com"
+
+    }
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+# send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload)
+
+    status_code = response.status_code
+    content = response.content
+    print(f"Status Code: {status_code}", f"Response Content: {content}")
+
+
+
 
 # def post_request():
 #     # set the URL of the API endpoint
