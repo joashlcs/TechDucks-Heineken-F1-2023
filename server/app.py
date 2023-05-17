@@ -110,18 +110,87 @@ collection = db['users']  #db.users
 #
 #     return jsonify(response)
 
+db = client['clientbase']  # database
+collection = db['users']
 
 @app.route("/data", methods=["POST"])
 def store_data():
     data = request.get_json()
-    # data = request.json  # Assuming data is sent as JSON in the request body
+    query = {
+        "FirstName": data['FirstName'],
+        "LastName": data['LastName'],
+        "DOB": data['DOB'],
+        "Contact": data['Contact'],
+        "Email": data['Email']
+    }
 
-    # Insert data into MongoDB
-    collection.insert_one(data)
+    result = collection.find_one(query)
 
-    return "Data stored successfully!"
+    if result:
+        # Data exists
+        response = {"exists": True}
+    else:
+        # Data does not exist
+        response = {"exists": False}
+        collection.insert_one(query)
+
+    return jsonify(response)
+
+@app.route('/update-data', methods=['POST'])
+def update_data():
+    data = request.get_json()
+    query = {
+        "Contact": data['Contact'],
+        "Email": data['Email']
+    }
+
+    # Query the database
+    result = collection.find_one(query)
+
+    if result:
+        # Data exists, update it
+        new_data = {"$set": {
+            "FirstName": data['FirstName'],
+            "LastName": data['LastName'],
+            "DOB": data['DOB'],
+            "Contact": data['Contact'],
+            "Email": data['Email']
+        }}
+
+        collection.update_one(query, new_data)
+        response = {"message": "Data updated successfully"}
+    else:
+        # Data does not exist
+        response = {"message": "Data not found"}
+
+    return jsonify(response)
+
+@app.route('/delete-data', methods=['POST'])
+def delete_data():
+    data = request.get_json()
+    query = {
+        "Contact": data['Contact'],
+        "Email": data['Email']
+    }
+
+    # Delete the data from the database
+    result = collection.find_one(query)
+
+    if result:
+        document = collection.delete_one(query)
+    else:
+        response = {"message": "Data not found"}
+
+    if document.deleted_count > 0:
+        # Data deleted successfully
+        response = {"message": "Data deleted successfully"}
+    else:
+        # Data not found
+        response = {"message": "Data deleted unsuccessfully"}
+
+    return jsonify(response)
+
 
 
 if __name__ == '__main__':
     app.run()
-

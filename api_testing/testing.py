@@ -73,9 +73,60 @@ def db_request():
     response = requests.post(url, data=json_payload, headers=headers)
 
     status_code = response.status_code
-    content = response.content
-    print(f"Status Code: {status_code}", f"Response Content: {content}")
+    # content = response.content
+    print(f"Status Code: {status_code}") # f"Response Content: {content}")
 
+def update_request():
+    url = "http://127.0.0.1:5000/update-data"
+
+    # set the JSON req payload
+    payload = {
+        "FirstName": "Joash",
+        "LastName": "Law",
+        "DOB": "11-02-2003",
+        "Contact": "91500846",
+        "Email": "joashlaw75@gmail.com"
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+# send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload, headers=headers)
+
+    status_code = response.status_code
+    # content = response.content
+    print(f"Status Code: {status_code}") # f"Response Content: {content}")
+
+def delete_request():
+    url = "http://127.0.0.1:5000/delete-data"
+
+    # set the JSON req payload
+    payload = {
+        "FirstName": "Joash",
+        "LastName": "Law",
+        "DOB": "11-02-2003",
+        "Contact": 91500846,
+        "Email": "joashlaw75@gmail.com"
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+# send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload, headers=headers)
+
+    status_code = response.status_code
+    # content = response.content
+    print(f"Status Code: {status_code}") # f"Response Content: {content}")
 
 
 
@@ -141,5 +192,8 @@ def db_request():
 
 if __name__ == '__main__':
     # print(post_request())
-    print(db_request())
+
+    # print(db_request())
+    # print(update_request())
+    print(delete_request())
 
