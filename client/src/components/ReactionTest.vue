@@ -1,10 +1,10 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center logo">
+  <div class="d-flex justify-content-center text-center align-items-center logo">
     <img class="fit-picture" src="../assets/heineken.png" alt="logo"/>
   </div>
-  <div class="d-flex justify-content-center align-items-center col">
+  <div class="d-flex flex-column align-items-center col">
     <p>Tap click when you're ready to race, then tap again when the lights go out.</p>
-    <p>Attempts Left {{ 3-retryCounter }}</p>
+    <p class="mb-0">Attempts Left: <b>{{ 3 - retryCounter }}</b></p>
   </div>
   <div v-if="jumpStart" class="d-flex justify-content-center align-items-center multiplier-2">
     <div class="background-heineken-red pop-up-notice">JUMP START!</div>
@@ -212,7 +212,8 @@ export default {
 }
 
 .multiplier-2 {
-  margin: 94px;
+  margin-top: 94px;
+  margin-bottom: 94px;
 }
 
 .player-info {

@@ -1,15 +1,24 @@
 <template>
-  <QRCodeScanner></QRCodeScanner>
-  <div class="d-flex flex-wrap justify-content-center align-items-center flex-column" style="height: 100vh;">
+  <div class="d-flex flex-wrap justify-content-center align-items-center flex-column col" style="height: 100vh;">
     <div class="logo">
       <img class="fit-picture" src="../assets/heineken.png"/>
     </div>
-    <div class="text-center mt-3">
-      <img v-if="result === 'passed'" class="gif" src="../assets/congratulation.gif" alt="Looping GIF" loop>
+    <div v-if="result === 'passed'" class="text-center mt-1">
+      <img class="gif" src="../assets/congratulation.gif" alt="Looping GIF" loop>
+      <div class="m-4 text-center">
+        <h2>Congratulations! You're under 0.600s!</h2>
+        <h2>Present your qr code @ the stores for <b>{{ percentageOff }}%</b> off!</h2>
+      </div>
     </div>
-    <div class="m-5 text-center">
-      <h2>Congratulations! You're under 0.600s!</h2>
-      <h2>Get yourself a discounted beer @ the stores!</h2>
+    <div v-else class="text-center ">
+      <img class="gif big" src="../assets/firstbeer_failed.gif" alt="Looping GIF" loop>
+      <div>
+        <h2>Oh no! You're over 0.600s.</h2>
+        <h2>Try Again Tomorrow!</h2>
+      </div>
+    </div>
+    <div class="text-center mt-3">
+      <p v-if="timeLeft >= 0">Returning to home in {{ timeLeft }} seconds...</p>
     </div>
   </div>
 </template>
@@ -25,6 +34,8 @@ export default {
       msg: '',
       userid: null,
       result: null,
+      timeLeft: 15,
+      percentageOff: 10,
     };
   },
   components: {
@@ -36,23 +47,29 @@ export default {
     this.result = resultData.result;
     console.log(`User ID: ${this.userid}`);
     console.log(`User ID: ${this.result}`);
+    this.startCountdown(); // Start the countdown timer
+    this.getPercentageOff();
   },
   methods: {
-    goToLogin() {
-      this.$router.push('/login')
-    },
     getMessage() {
-
-      const path = 'http://127.0.0.1:5000/ping';
-      axios.get(path)
-          .then((res) => {
-            this.msg = res.data;
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+      // Your existing code here
     },
-  }
+    goToLandingPage() {
+      this.$router.push('/');
+    },
+    startCountdown() {
+      setInterval(() => {
+        if (this.timeLeft > 0) {
+          this.timeLeft--;
+        } else {
+          this.goToLandingPage();
+        }
+      }, 1000);
+    },
+    getPercentageOff() {
+      // Call An API to discount using discount chart.
+    }
+  },
 };
 </script>
 
@@ -65,14 +82,12 @@ h1 {
   max-height: 300px;
 }
 
+.gif big{
+  max-width: 400px;
+  max-height: 400px;
+}
+
 .fit-picture {
   width: 250px;
-}
-.btn-heineken {
-  transform: scale(1.75);
-  background-color: #038135 !important;
-  color: white !important;
-  border-radius: 10px !important;
-  padding: 10px;
 }
 </style>
