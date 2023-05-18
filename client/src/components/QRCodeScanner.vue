@@ -6,16 +6,18 @@
 </template>
 
 <script>
+import axios from "axios";
 import QrScanner from 'qr-scanner';
 import Alert from "@/components/Alert.vue";
 
 export default {
   data() {
     return {
-      qrResult: '',
+      user_id: '',
       scanner: null,
       message: '',
       showMessage: false,
+      isValid: false,
     };
   },
   components: {
@@ -28,6 +30,20 @@ export default {
     this.stopScan();
   },
   methods: {
+    valid() {
+      const payload = {
+        user_id: this.user_id,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${payload.user_id}/cups`;
+      return axios.get(path, payload)
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     startScan() {
       const video = document.getElementById('qrScanner');
       QrScanner.hasCamera().then(hasCamera => {
@@ -36,13 +52,19 @@ export default {
           return;
         }
         this.scanner = new QrScanner(video, result => {
-          this.qrResult = result.data;
-          if (result.data === '12345678') {
-            // Require API request to see if user is first timer (API should return if QR code is new [TRUE] or old [False])
-            this.stopScan()
-            this.$router.push(`/reactiontest/${result.data}`);
+          this.user_id = result.data;
+          const response = this.valid()
+          console.log(response)
+          if (response.data === '200') { //Check if user is present
+            if (response.data >= 1) {
+              this.stopScan()
+              this.$router.push(`/reactiontest/${this.user_id}`); // push to returning user page
+            } else {
+              this.stopScan()
+              this.$router.push(`/reactiontest/${this.user_id}`); //push to new user page
+            }
           } else {
-            this.message = 'Invalid QR code. Please use a valid one';
+            this.message = 'Invalid QR code or User. Please use a valid one';
             this.showMessage = true;
             this.scanner.start();
             this.startScan();

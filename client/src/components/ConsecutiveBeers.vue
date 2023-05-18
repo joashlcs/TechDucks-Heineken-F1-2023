@@ -7,7 +7,7 @@
       <img class="gif" src="../assets/congratulation.gif" alt="Looping GIF" loop>
       <div class="m-4 text-center">
         <h2>Congratulations! You're under 0.600s!</h2>
-        <h2>Present your QR code @ the stores for <b>{{ percentageOff }}%</b> off!</h2>
+        <h2>Present your qr code @ the stores for <b>{{ percentageOff }}%</b> off!</h2>
       </div>
     </div>
     <div v-else class="text-center ">
@@ -18,9 +18,7 @@
       </div>
     </div>
     <div class="text-center mt-3">
-      <a href="/">
-        <p v-if="timeLeft >= 0">Returning to home in {{ timeLeft }} seconds...</p>
-      </a>
+      <p v-if="timeLeft >= 0">Returning to home in {{ timeLeft }} seconds...</p>
     </div>
   </div>
 </template>
@@ -36,7 +34,7 @@ export default {
       msg: '',
       userid: null,
       result: null,
-      timeLeft: 1000,
+      timeLeft: 15,
       percentageOff: 10,
     };
   },
@@ -49,7 +47,7 @@ export default {
     this.result = resultData.result;
     console.log(`User ID: ${this.userid}`);
     console.log(`User ID: ${this.result}`);
-    this.startCountdown(); // Start the countdown timer
+    // this.startCountdown(); // Start the countdown timer
     this.getPercentageOff();
   },
   methods: {
@@ -79,12 +77,6 @@ export default {
 h1 {
   line-height: 1 !important;
 }
-
-a {
-  color: inherit !important;
-  text-decoration: none !important;
-}
-
 .gif {
   max-width: 300px;
   max-height: 300px;

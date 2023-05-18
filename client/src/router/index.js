@@ -4,6 +4,8 @@ import LandingPage from "@/components/LandingPage.vue";
 import Video from "@/components/Video.vue";
 import reactionTest from "@/components/ReactionTest.vue";
 import FirstBeer from "@/components/FirstBeer.vue";
+import ConsecutiveBeers from "@/components/ConsecutiveBeers.vue";
+import CupCollection from "@/components/CupCollection.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -24,6 +26,11 @@ const router = createRouter({
       component: Video
     },
     {
+      path: '/returnuser/:id',
+      name: 'returnUser',
+      component: CupCollection
+    },
+    {
       path: '/reactiontest/:id',
       name: 'reactiontest',
       component: reactionTest
@@ -34,12 +41,9 @@ const router = createRouter({
       component: FirstBeer
     },
     {
-    meta: {
-      title: "Details",
-    },
-    path: "/management/details/:id",
-    name: "details",
-    component: () => import("@/views/Details.vue"),
+    path: "/consecutivebeer/:id/:result",
+    name: "consecutivebeer",
+    component: ConsecutiveBeers
   },
   ]
 })
