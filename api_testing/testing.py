@@ -241,6 +241,6 @@ if __name__ == '__main__':
     # db_request()
     # update_request()
     # delete_request()
-    # getcup_request()
-    updatecup_request()
+    getcup_request()
+    # updatecup_request()
 

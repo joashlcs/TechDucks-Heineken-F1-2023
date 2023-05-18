@@ -220,7 +220,7 @@ def cup_count(document_id):
         if document:
             # Get the cup count
             cups = 0  # or any other initial value
-            collection.update_one({"_id": query["document_id"]}, {"$set": {"cups": cups}})
+            collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"cups": cups}})
             response = {'cups': cups}
             return jsonify(response)
         else:
@@ -229,7 +229,7 @@ def cup_count(document_id):
 
     elif request.method == 'POST':
         # Find the document in MongoDB
-        document = collection.find_one(document_id)
+        document = collection.find_one(ObjectId(document_id))
 
         if document:
             # Increment the cup count
@@ -237,7 +237,7 @@ def cup_count(document_id):
             new_cups = current_cups + 1
 
             # Update the document with the new cup count
-            collection.update_one(document_id, {'$set': {'cups': new_cups}})
+            collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"cups": new_cups}})
 
             return jsonify({'message': 'Cup count updated successfully'})
         else:
