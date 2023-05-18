@@ -1,9 +1,11 @@
 # import uuid
 from pymongo import MongoClient
+from bson import ObjectId
+
 
 
 from flask import Flask, jsonify, request
-# from flask_cors import CORS
+from flask_cors import CORS
 
 
 # BOOKS = [
@@ -31,8 +33,8 @@ from flask import Flask, jsonify, request
 app = Flask(__name__)
 app.config.from_object(__name__)
 
-# # enable CORS
-# CORS(app, resources={r'/*': {'origins': '*'}})
+# enable CORS
+CORS(app, resources={r'/*': {'origins': '*'}})
 #
 #
 # def remove_book(book_id):
@@ -138,30 +140,41 @@ def store_data():
 def update_data():
     data = request.get_json()
     query = {
-        "document_id": data["document_id"],
-        "FirstName": data['FirstName'],
-        "LastName": data['LastName'],
-        "DOB": data['DOB'],
-        "Contact": data['Contact'],
-        "Email": data['Email'],
-        "PW": data['PW']
+        "document_id": data["document_id"]
     }
 
+    # query2 = {
+    #     "FirstName": data['FirstName'],
+    #     "LastName": data['LastName'],
+    #     "DOB": data['DOB'],
+    #     "Contact": data['Contact'],
+    #     "Email": data['Email']
+    # }
+
     # Query the database
-    result = collection.find_one(query["document_id"])
+    result = collection.find_one(ObjectId(query["document_id"]))
 
     if result:
         # Data exists, update it
-        new_data = {"$set": {
+        new_data = {
+            "$set":
+                {
             "FirstName": data['FirstName'],
             "LastName": data['LastName'],
             "DOB": data['DOB'],
             "Contact": data['Contact'],
             "Email": data['Email']
-        }}
+        }
+        }
 
-        collection.update_one(query["document_id"], new_data)
+        collection.update_one({"_id": ObjectId(query["document_id"])}, new_data)
+
+        cursor = collection.find()
+        for record in cursor:
+            print(record)
+
         response = {"message": "Data updated successfully"}
+
     else:
         # Data does not exist
         response = {"message": "Data not found, please sign up"}
@@ -176,10 +189,10 @@ def delete_data():
     }
 
     # Delete the data from the database
-    result = collection.find_one(query["document_id"])
+    result = collection.find_one(ObjectId(query["document_id"]))
 
     if result:
-        document = collection.delete_one(query["document_id"])
+        document = collection.delete_one({"_id": ObjectId(query["document_id"])})
         print({"message": "Document deleted"})
     else:
         print({"message": "Data not found"})
@@ -194,28 +207,29 @@ def delete_data():
     return jsonify(response)
 
 @app.route('/<document_id>/cups', methods=['GET', 'POST'])
-def cup_count():
+def cup_count(document_id):
     data = request.get_json()
     query = {
         "document_id": data["document_id"]
     }
 
-    if request.method == 'GET':
+    if request.method == 'GET':  # first scan at kiosk
         # Find the document in MongoDB
-        document = collection.find_one(query["document_id"])
+        document = collection.find_one(ObjectId(document_id))
 
         if document:
             # Get the cup count
-            cups = document.get('cups', 0)
+            cups = 0  # or any other initial value
+            collection.update_one({"_id": query["document_id"]}, {"$set": {"cups": cups}})
             response = {'cups': cups}
             return jsonify(response)
         else:
-            response = {"message": "Data not found"}
+            response = {"message": "Data not found, please sign up"}
             return jsonify(response)
 
     elif request.method == 'POST':
         # Find the document in MongoDB
-        document = collection.find_one(query["document_id"])
+        document = collection.find_one(document_id)
 
         if document:
             # Increment the cup count
@@ -223,7 +237,7 @@ def cup_count():
             new_cups = current_cups + 1
 
             # Update the document with the new cup count
-            collection.update_one(query["document_id"], {'$set': {'cups': new_cups}})
+            collection.update_one(document_id, {'$set': {'cups': new_cups}})
 
             return jsonify({'message': 'Cup count updated successfully'})
         else:

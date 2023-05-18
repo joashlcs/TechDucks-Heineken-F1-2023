@@ -1,5 +1,7 @@
 import requests
 import json
+from bson import ObjectId
+
 
 
 # def post_request():
@@ -82,10 +84,10 @@ def update_request():
 
     # set the JSON req payload
     payload = {
-        "document_id": "6465a9b516762ce2391d363b",
+        "document_id": str(ObjectId("6465c6f848faf7e66a5bd750")),
         "FirstName": "Joash",
         "LastName": "Law",
-        "DOB": 11022003,
+        "DOB": "11-02-2003",
         "Contact": 91500846,
         "Email": "joashlaw75@gmail.com",
         "PW": "xtyxcykthgfcgvk"
@@ -110,13 +112,7 @@ def delete_request():
 
     # set the JSON req payload
     payload = {
-        "document_id": "6465a9b516762ce2391d363b",
-        "FirstName": "Joash",
-        "LastName": "Law",
-        "DOB": 11022003,
-        "Contact": 91500846,
-        "Email": "joashlaw75@gmail.com",
-        "PW": "xtyxcykthgfcgvk"
+        "document_id": str(ObjectId("6465c6f848faf7e66a5bd750")),
     }
 
     headers = {
@@ -133,10 +129,10 @@ def delete_request():
     # content = response.content
     print(f"Status Code: {status_code}") # f"Response Content: {content}")
 
-def getcup_request():  # when they're <0.6s
+def getcup_request():  # first scan at kiosk
 
     payload = {
-        "document_id": "6465a9b516762ce2391d363b",
+        "document_id": str(ObjectId("6465d811b732336bb5bcb3b9"))
     }
 
     # set the JSON req payload
@@ -156,11 +152,11 @@ def getcup_request():  # when they're <0.6s
     # content = response.content
     print(f"Status Code: {status_code}")
 
-def updatecup_request():  # when they first scan at the kiosk
+def updatecup_request():  # when they purchase a cup
 
     # set the JSON req payload
     payload = {
-        "document_id": "6465a9b516762ce2391d363b",
+        "document_id": str(ObjectId("6465d811b732336bb5bcb3b9"))
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/cups'
@@ -243,8 +239,8 @@ if __name__ == '__main__':
     # print(post_request())
 
     # db_request()
-    update_request()
+    # update_request()
     # delete_request()
     # getcup_request()
-    # updatecup_request()
+    updatecup_request()
 
