@@ -206,42 +206,78 @@ def delete_data():
 
     return jsonify(response)
 
-@app.route('/<document_id>/cups', methods=['GET', 'POST'])
+@app.route('/<document_id>/cup-count', methods=['POST'])
 def cup_count(document_id):
     data = request.get_json()
     query = {
         "document_id": data["document_id"]
     }
+    document = collection.find_one(ObjectId(document_id))
 
-    if request.method == 'GET':  # first scan at kiosk
-        # Find the document in MongoDB
-        document = collection.find_one(ObjectId(document_id))
+    if document:
+        # Get the cup count
+        cups = 0  # or any other initial value
+        collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"cups": cups}})
+        response = {'cups': cups}
+        return jsonify(response)
+    else:
+        response = {"message": "Data not found, please sign up"}
+        return jsonify(response)
 
-        if document:
-            # Get the cup count
-            cups = 0  # or any other initial value
-            collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"cups": cups}})
-            response = {'cups': cups}
-            return jsonify(response)
-        else:
-            response = {"message": "Data not found, please sign up"}
-            return jsonify(response)
+@app.route('/<document_id>/cup-update', methods=['POST'])
+def cup_update(document_id):
+    data = request.get_json()
+    query = {
+        "document_id": data["document_id"]
+    }
 
-    elif request.method == 'POST':
-        # Find the document in MongoDB
-        document = collection.find_one(ObjectId(document_id))
+    # Find the document in MongoDB
+    document = collection.find_one(ObjectId(document_id))
 
-        if document:
-            # Increment the cup count
-            current_cups = document.get('cups', 0)
-            new_cups = current_cups + 1
+    if document:
+        # Increment the cup count
+        current_cups = document.get('cups', 0)
+        new_cups = current_cups + 1
 
-            # Update the document with the new cup count
-            collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"cups": new_cups}})
+        # Update the document with the new cup count
+        collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"cups": new_cups}})
 
-            return jsonify({'message': 'Cup count updated successfully'})
-        else:
-            return jsonify({'error': 'Document not found'})
+        return jsonify({'message': 'Cup count updated successfully'})
+    else:
+        return jsonify({'error': 'Document not found'})
+
+@app.route('<document_id>/entries', methods=['POST'])
+def reaction_time(document_id):
+    data = request.get_json()
+
+    query = {
+        "document_id": data["document_id"]
+    }
+    # Find the document in MongoDB
+    document = collection.find_one(ObjectId(document_id))
+
+    if document:
+        # Get the cup count
+        time = data["time"]
+        status = time > 0.6
+        response = {"status": status}
+
+        collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"status": status}})
+        return jsonify({'message': 'Reaction Time updated successfully', 'status': status})
+
+    else:
+        return jsonify({'error': 'Document not found'})
+
+    # Assuming your entry has a 'time' field that represents the time in seconds
+    time = data.get('time', 0)
+
+    # Determine if the entry is above 0.6 seconds
+    is_above_threshold = time > 0.6
+
+    # Save the entry to the MongoDB collection
+    collection.insert_one({'time': time, 'is_above_threshold': is_above_threshold})
+
+    return jsonify(response)
 
 
 

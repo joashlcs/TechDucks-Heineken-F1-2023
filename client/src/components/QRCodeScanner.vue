@@ -35,8 +35,10 @@ export default {
         user_id: this.user_id,
         read: true
       };
+
       const path = `http://127.0.0.1:5000/${payload.user_id}/cups`;
-      return axios.get(path, payload)
+
+      return axios.get(path, { params: payload })
         .then((response) => {
           return response;
         })
