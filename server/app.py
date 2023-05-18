@@ -112,6 +112,27 @@ client = MongoClient('mongodb://127.0.0.1:27017/?directConnection=true&serverSel
 db = client['clientbase']  # database
 collection = db['users']
 
+table = db['bonus']
+data = {
+    'glass 1': 10,
+    'glass 2': 12,
+    'glass 3': 15,
+    'glass 4': 18,
+    'glass 5^': 25,
+
+    '<0.150': 2,
+    '<0.250': 1.6,
+    '<0.400': 1.35,
+    '<0.600': 1.10,
+
+    'drinkaid': 0.5,
+    'penalty': 0.7
+}
+
+# Insert the document into the collection
+table.insert_one(data)
+
+
 @app.route("/data", methods=["POST"])
 def store_data():
     data = request.get_json()
@@ -246,7 +267,7 @@ def cup_update(document_id):
     else:
         return jsonify({'error': 'Document not found'})
 
-@app.route('/<document_id>/entries', methods=['POST'])
+@app.route('/<document_id>/reaction-time', methods=['POST'])
 def reaction_time(document_id):
     data = request.get_json()
 
@@ -259,26 +280,31 @@ def reaction_time(document_id):
     if document:
         # Get the cup count
         time = data["time"]
-        status = time > 0.6
-        response = {"status": status}
+        status = time < 0.6
+        if status:
+            response = {"status": "passed"}
+        else:
+            response = {"status": "failed"}
 
         collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"status": status}})
-        return jsonify({'message': 'Reaction Time updated successfully', 'status': status})
+        return jsonify(response)
 
     else:
         return jsonify({'error': 'Document not found'})
 
-    # Assuming your entry has a 'time' field that represents the time in seconds
-    time = data.get('time', 0)
-
-    # Determine if the entry is above 0.6 seconds
-    is_above_threshold = time > 0.6
-
-    # Save the entry to the MongoDB collection
-    collection.insert_one({'time': time, 'is_above_threshold': is_above_threshold})
-
-    return jsonify(response)
-
+# @app.route('/<document_id>/bonus', methods=['POST'])
+# def bonus_chart(document_id):
+#     data = request.get_json()
+#
+#     query = {
+#         "document_id": data["document_id"]
+#     }
+#
+#     document = collection.find_one(ObjectId(document_id))
+#     if document:
+#
+#
+#         return jsonify()
 
 
 if __name__ == '__main__':
