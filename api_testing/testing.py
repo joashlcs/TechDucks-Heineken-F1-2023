@@ -84,7 +84,7 @@ def update_request():
 
     # set the JSON req payload
     payload = {
-        "document_id": str(ObjectId("6465c6f848faf7e66a5bd750")),
+        "document_id": str(ObjectId("64663cd81b4fb124d27861c2")),
         "FirstName": "Joash",
         "LastName": "Law",
         "DOB": "11-02-2003",
@@ -112,7 +112,7 @@ def delete_request():
 
     # set the JSON req payload
     payload = {
-        "document_id": str(ObjectId("6465c6f848faf7e66a5bd750")),
+        "document_id": str(ObjectId("64663d651b4fb124d27861c3")),
     }
 
     headers = {
@@ -132,7 +132,7 @@ def delete_request():
 def getcup_request():  # first scan at kiosk
 
     payload = {
-        "document_id": str(ObjectId("6465d811b732336bb5bcb3b9"))
+        "document_id": str(ObjectId("64663cd81b4fb124d27861c2"))
     }
 
     # set the JSON req payload
@@ -146,7 +146,7 @@ def getcup_request():  # first scan at kiosk
     json_payload = json.dumps(payload)
 
     # send the POST request with the JSON payload
-    response = requests.get(url, data=json_payload, headers=headers)
+    response = requests.post(url, data=json_payload, headers=headers)
 
     status_code = response.status_code
     # content = response.content
@@ -156,7 +156,7 @@ def updatecup_request():  # when they purchase a cup
 
     # set the JSON req payload
     payload = {
-        "document_id": str(ObjectId("6465d811b732336bb5bcb3b9"))
+        "document_id": str(ObjectId("64663cd81b4fb124d27861c2"))
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/cup-update'
@@ -174,7 +174,6 @@ def updatecup_request():  # when they purchase a cup
     status_code = response.status_code
     # content = response.content
     print(f"Status Code: {status_code}")
-
 
 
 # def post_request():
@@ -235,14 +234,12 @@ def updatecup_request():  # when they purchase a cup
 
 
 
-
-
 if __name__ == '__main__':
-    # print(post_request())
+# print(post_request())
 
     # db_request()
     # update_request()
     # delete_request()
-    getcup_request()
+    # getcup_request()
     # updatecup_request()
 
