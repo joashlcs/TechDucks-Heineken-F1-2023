@@ -246,7 +246,7 @@ def cup_update(document_id):
     else:
         return jsonify({'error': 'Document not found'})
 
-@app.route('<document_id>/entries', methods=['POST'])
+@app.route('/<document_id>/entries', methods=['POST'])
 def reaction_time(document_id):
     data = request.get_json()
 
