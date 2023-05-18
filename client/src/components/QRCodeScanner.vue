@@ -32,13 +32,17 @@ export default {
   methods: {
     valid() {
       const payload = {
-        user_id: this.user_id,
+        "document_id": this.user_id,
         read: true
       };
+      const path = `http://127.0.0.1:5000/${this.user_id}/cup-count`;
 
-      const path = `http://127.0.0.1:5000/${payload.user_id}/cups`;
-
-      return axios.get(path, { params: payload })
+      axios.post(path, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        params: payload
+      })
         .then((response) => {
           return response;
         })
@@ -55,15 +59,17 @@ export default {
         }
         this.scanner = new QrScanner(video, result => {
           this.user_id = result.data;
+          console.log(this.user_id)
           const response = this.valid()
           console.log(response)
+          this.stopScan()
           if (response.data === '200') { //Check if user is present
             if (response.data >= 1) {
               this.stopScan()
-              this.$router.push(`/reactiontest/${this.user_id}`); // push to returning user page
+              this.$router.push(`/returnuser/${this.user_id}`); // push to returning user page
             } else {
               this.stopScan()
-              this.$router.push(`/reactiontest/${this.user_id}`); //push to new user page
+              this.$router.push(`/reactiontest/${this.user_id}/firstbeer`); //push to new user page
             }
           } else {
             this.message = 'Invalid QR code or User. Please use a valid one';
