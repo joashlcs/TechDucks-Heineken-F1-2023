@@ -230,10 +230,15 @@ def delete_data():
 @app.route('/<document_id>/cup-count', methods=['POST'])
 def cup_count(document_id):
     data = request.get_json()
+
+    if not data['params']["document_id"]:
+        response = {"error": "Invalid payload. Missing 'document_id'."}
+        return jsonify(response), 400
+
     query = {
-        "document_id": data["document_id"]
+        "document_id": data['params']["document_id"]
     }
-    document = collection.find_one(ObjectId(document_id))
+    document = collection.find_one({"_id": ObjectId(document_id)})
 
     if document:
         # Get the cup count
@@ -244,6 +249,7 @@ def cup_count(document_id):
     else:
         response = {"message": "Data not found, please sign up"}
         return jsonify(response)
+
 
 @app.route('/<document_id>/cup-update', methods=['POST'])
 def cup_update(document_id):

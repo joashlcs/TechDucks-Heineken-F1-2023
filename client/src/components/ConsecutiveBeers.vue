@@ -1,27 +1,45 @@
 <template>
-  <div class="d-flex flex-wrap justify-content-center align-items-center flex-column col" style="height: 100vh;">
+  <div class="d-flex flex-column align-items-center" style="height: 100vh;">
     <div class="logo">
       <img class="fit-picture" src="../assets/heineken.png"/>
     </div>
     <div v-if="result === 'passed'" class="text-center mt-1">
-      <img class="gif" src="../assets/congratulation.gif" alt="Looping GIF" loop>
+      <b2>
+        <h2>Congratulations,</h2>
+        <h2>You're under 0.600s again!</h2>
+      </b2>
+      <img class="gif" src="../assets/consecutivebeer.png" alt="Looping GIF" loop>
+      <div class="m-3 mb-4 text-center">
+        <div class="button-container">
+          <button class="btn-heineken-page background-heineken-green">TRY DRINKAID FOR FREE</button>
+          <span class="vertical-center"><b>OR</b></span>
+          <button class="btn-heineken-second-option">GET NEXT CUP @ {{ percentageOff }}% OFF</button>
+        </div>
+      </div>
+    </div>
+    <div v-else class="text-center mt-1">
+      <b2>
+        <h2>Oh no, You're over 0.600s!</h2>
+      </b2>
+<!--      <div class="text-center">-->
+<!--        <p class="m-0">*0.600s is the minimum requirement for safe driving </p>-->
+<!--      </div>-->
+      <img class="gif" src="../assets/warningcrash.png" alt="Car Crash Warning">
+      <b2>
+        <h2 class="m-0">Don't Drive, Get DrinkAid</h2>
+      </b2>
       <div class="m-4 text-center">
-        <h2>Congratulations! You're under 0.600s!</h2>
-        <h2>Present your qr code @ the stores for <b>{{ percentageOff }}%</b> off!</h2>
+        <div class="button-container">
+          <button class="btn-heineken-page background-heineken-green" >TRY DRINKAID FOR 30% OFF</button>
+        </div>
       </div>
     </div>
-    <div v-else class="text-center ">
-      <img class="gif big" src="../assets/firstbeer_failed.gif" alt="Looping GIF" loop>
-      <div>
-        <h2>Oh no! You're over 0.600s.</h2>
-        <h2>Try Again Tomorrow!</h2>
-      </div>
-    </div>
-    <div class="text-center mt-3">
-      <p v-if="timeLeft >= 0">Returning to home in {{ timeLeft }} seconds...</p>
+    <div class="text-center">
+      <p>Psst... DrinkAid helps prevent hangovers!</p>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -67,7 +85,7 @@ export default {
       }, 1000);
     },
     getPercentageOff() {
-      // Call An API to discount using discount chart.
+      // Call An API to get discount using discount chart.
     }
   },
 };
@@ -90,4 +108,45 @@ h1 {
 .fit-picture {
   width: 250px;
 }
+
+.btn-heineken-page {
+  transform: scale(0.9) !important;
+  font-size: 1rem !important;
+  max-width: 150px;
+  border-radius: 15px;
+  padding: 10px;
+}
+
+.btn-heineken-second-option {
+  transform: scale(0.9) !important;
+  font-size: 1rem !important;
+  max-width: 150px;
+  background-color: transparent;
+  border: none;
+  padding: 13px;
+  color: black;
+  box-shadow: 0 0 0 4px #038135 inset;
+  border-radius: 15px;
+}
+
+.background-heineken-green {
+  background-color: #038135 !important;
+  color: white !important;
+}
+
+.background-heineken-red {
+  background-color: #E30613 !important;
+  color: white !important;
+}
+
+.button-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vertical-center {
+  margin: 0 10px;
+}
+
 </style>

@@ -11,7 +11,7 @@
       <h1 class="heineken-text-glow" style="font-size: 5em;">BEER</h1>
     </div>
     <div class="mt-5 text-center">
-      <span class="btn-heineken">Scan Your QR Code Below</span>
+      <span class="btn-heineken background-heineken-green">Scan Your QR Code Below</span>
     </div>
     <img class="scroll-down-link scroll-down-arrow" src="../assets/down-arrow.png"/>
   </div>
@@ -66,11 +66,16 @@ span {
 }
 .btn-heineken {
   transform: scale(1.75);
-  background-color: #038135 !important;
   color: white !important;
   border-radius: 10px !important;
   padding: 10px;
 }
+
+.background-heineken-green {
+  background-color: #038135 !important;
+  color: white !important;
+}
+
 .heineken-text-glow {
   color: #FFD501;
   text-shadow: 4px 4px 3px rgba(255, 213, 1, 0.9);

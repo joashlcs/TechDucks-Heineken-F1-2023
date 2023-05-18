@@ -258,10 +258,10 @@ def reaction_time():
 
 
 if __name__ == '__main__':
-    pass
+    # pass
     # print(post_request())
 
-    # db_request()
+    db_request()
     # update_request()
     # delete_request()
     # getcup_request()

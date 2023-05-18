@@ -31,7 +31,7 @@ const router = createRouter({
       component: CupCollection
     },
     {
-      path: '/reactiontest/:id',
+      path: '/reactiontest/:id/:status',
       name: 'reactiontest',
       component: reactionTest
     },

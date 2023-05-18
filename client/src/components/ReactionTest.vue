@@ -3,7 +3,7 @@
     <img class="fit-picture" src="../assets/heineken.png" alt="logo"/>
   </div>
   <div class="d-flex flex-column align-items-center col">
-    <p>Tap click when you're ready to race, then tap again when the lights go out.</p>
+    <p class="text-center">Tap click when you're ready to race, then tap again when the lights go out.</p>
     <p class="mb-0">Attempts Left: <b>{{ 3 - retryCounter }}</b></p>
   </div>
   <div v-if="jumpStart" class="d-flex justify-content-center align-items-center multiplier-2">
@@ -51,11 +51,13 @@ export default {
       bestTime: null,
       retryCounter: 0,
       userid: null,
+      status: null,
     };
   },
   created() {
-    const resultData = this.$route.params.id;
-    this.userid = resultData;
+    const resultData = this.$route.params;
+    this.userid = resultData.id;
+    this.status = resultData.status;
     console.log(`User ID: ${resultData}`);
   },
   methods: {
@@ -120,12 +122,12 @@ export default {
         if (this.bestTime <= 0.6 && this.bestTime !== null) {
           console.log(this.bestTime)
           const status = "passed";
-          this.$router.push(`/firstbeer/${this.userid}/${status}`);
+          this.$router.push(`/${this.status}/${this.userid}/${status}`);
         }
         else {
           console.log(this.bestTime)
           const status = "failed";
-          this.$router.push(`/firstbeer/${this.userid}/${status}`);
+          this.$router.push(`/${this.status}/${this.userid}/${status}`);
         }
       }
     },

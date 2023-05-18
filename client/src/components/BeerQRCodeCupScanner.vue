@@ -36,20 +36,6 @@ export default {
     this.stopScan();
   },
   methods: {
-    valid() {
-      const payload = {
-        cup_id: this.cup_id,
-        read: true
-      };
-      const path = `http://127.0.0.1:5000/${payload.user_id}/cups`; // Call API to determine if cup belong to user
-      return axios.get(path, payload)
-        .then((response) => {
-          return response;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
     startScan() {
       const video = document.getElementById('qrScanner2');
       QrScanner.hasCamera().then(hasCamera => {
@@ -59,11 +45,10 @@ export default {
         }
         this.scanner = new QrScanner(video, result => {
           this.cup_id = result.data;
-          const response = 200;
-          console.log(response)
-          if (response === 200) { // Check if cup belongs to user
+
+          if (this.user_id === this.cup_id) { // Check if cup belongs to user
             this.stopScan()
-            this.$router.push(`/reactiontest/${this.user_id}`);
+            this.$router.push(`/reactiontest/${this.user_id}/consecutivebeer`);
           } else {
             this.message = 'Please place your own cup into the holder below';
             this.showMessage = true;
