@@ -21,9 +21,6 @@
       <b2>
         <h2>Oh no, You're over 0.600s!</h2>
       </b2>
-<!--      <div class="text-center">-->
-<!--        <p class="m-0">*0.600s is the minimum requirement for safe driving </p>-->
-<!--      </div>-->
       <img class="gif" src="../assets/warningcrash.png" alt="Car Crash Warning">
       <b2>
         <h2 class="m-0">Don't Drive, Get DrinkAid</h2>
@@ -31,6 +28,8 @@
       <div class="m-4 text-center">
         <div class="button-container">
           <button class="btn-heineken-page background-heineken-green" >TRY DRINKAID FOR 30% OFF</button>
+          <span class="vertical-center"><b>OR</b></span>
+          <button class="btn-heineken-third-option" @click="cancelButton">No Thanks</button>
         </div>
       </div>
     </div>
@@ -54,6 +53,7 @@ export default {
       result: null,
       timeLeft: 15,
       percentageOff: 10,
+      final_decision: null
     };
   },
   components: {
@@ -69,6 +69,42 @@ export default {
     this.getPercentageOff();
   },
   methods: {
+    finalDecision() {
+      if (this.user_id === null) {
+        console.log("Missing user_id");
+        return Promise.reject("Missing user_id");
+      }
+
+      const payload = {
+        document_id: this.user_id,
+        finalDecision: this.final_decision,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.user_id}/cup-count`; // Call API to update final buying decision of drinkaid after consecutive failing
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error; // Re-throw the error to be caught by the caller
+        });
+    },
+    cancelButton() {
+      this.final_decision = false;
+      this.finalDecision()
+        .then((response) => {
+          this.$router.push('/');
+        })
+        .catch((error) => {
+          console.log(error)
+        });
+    },
     getMessage() {
       // Your existing code here
     },
@@ -126,6 +162,18 @@ h1 {
   padding: 13px;
   color: black;
   box-shadow: 0 0 0 4px #038135 inset;
+  border-radius: 15px;
+}
+
+.btn-heineken-third-option {
+  transform: scale(0.9) !important;
+  font-size: 1rem !important;
+  max-width: 150px;
+  background-color: transparent;
+  border: none;
+  padding: 25px 35px;
+  color: black;
+  box-shadow: 0 0 0 4px #E30613 inset;
   border-radius: 15px;
 }
 

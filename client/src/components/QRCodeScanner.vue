@@ -31,23 +31,28 @@ export default {
   },
   methods: {
     valid() {
+      if (this.user_id === null) {
+        console.log("Missing document_id");
+        return Promise.reject("Missing document_id");
+      }
+
       const payload = {
-        "document_id": this.user_id,
+        document_id: this.user_id,
         read: true
       };
       const path = `http://127.0.0.1:5000/${this.user_id}/cup-count`;
 
-      axios.post(path, {
+      return axios.post(path, payload, {
         headers: {
           'Content-Type': 'application/json'
-        },
-        params: payload
+        }
       })
         .then((response) => {
           return response;
         })
         .catch((error) => {
           console.log(error);
+          throw error; // Re-throw the error to be caught by the caller
         });
     },
     startScan() {
@@ -60,23 +65,26 @@ export default {
         this.scanner = new QrScanner(video, result => {
           this.user_id = result.data;
           console.log(this.user_id)
-          const response = this.valid()
-          console.log(response)
+          this.valid()
+            .then((response) => {
+              console.log(response);
+              console.log(response.data.cups)
+              if (response.data.cups > 0) {
+                this.stopScan()
+                this.$router.push(`/returnuser/${this.user_id}`);
+              } else {
+                this.stopScan()
+                this.$router.push(`/reactiontest/${this.user_id}/firstbeer`); //push to new user page
+              }
+            })
+            .catch((error) => {
+              console.log(error);
+              this.message = 'Invalid QR code or User. Please use a valid one';
+              this.showMessage = true;
+              this.scanner.start();
+              this.startScan();
+            });
           this.stopScan()
-          if (response.data === '200') { //Check if user is present
-            if (response.data >= 1) {
-              this.stopScan()
-              this.$router.push(`/returnuser/${this.user_id}`); // push to returning user page
-            } else {
-              this.stopScan()
-              this.$router.push(`/reactiontest/${this.user_id}/firstbeer`); //push to new user page
-            }
-          } else {
-            this.message = 'Invalid QR code or User. Please use a valid one';
-            this.showMessage = true;
-            this.scanner.start();
-            this.startScan();
-          }
         }, { returnDetailedScanResult: true });
         this.scanner.start();
       });
