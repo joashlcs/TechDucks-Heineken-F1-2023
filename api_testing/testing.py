@@ -132,7 +132,7 @@ def delete_request():
 def getcup_request():  # first scan at kiosk
 
     payload = {
-        "document_id": str(ObjectId("64663cd81b4fb124d27861c2"))
+        "document_id": str(ObjectId("646658965fdece05d6082923"))
     }
 
     # set the JSON req payload
@@ -156,7 +156,7 @@ def updatecup_request():  # when they purchase a cup
 
     # set the JSON req payload
     payload = {
-        "document_id": str(ObjectId("64663cd81b4fb124d27861c2"))
+        "document_id": str(ObjectId("646658965fdece05d6082923"))
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/cup-update'
@@ -177,7 +177,7 @@ def updatecup_request():  # when they purchase a cup
 
 def reaction_time():
     payload = {
-        "document_id": str(ObjectId("64664daafd7e9582e41cbc21")),
+        "document_id": str(ObjectId("646658965fdece05d6082923")),
         "time": 0.341
     }
 
@@ -197,7 +197,26 @@ def reaction_time():
     # content = response.content
     print(f"Status Code: {status_code}")
 
+def bonus():
+    payload = {
+        "document_id": str(ObjectId("646658965fdece05d6082923"))
+    }
 
+    url = f'http://127.0.0.1:5000/{payload["document_id"]}/bonus'
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+    # send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload, headers=headers)
+
+    status_code = response.status_code
+    # content = response.content
+    print(f"Status Code: {status_code}")
 
 # def post_request():
 #     # set the URL of the API endpoint
@@ -261,10 +280,10 @@ if __name__ == '__main__':
     # pass
     # print(post_request())
 
-    db_request()
+    # db_request()
     # update_request()
     # delete_request()
     # getcup_request()
     # updatecup_request()
     # reaction_time()
-
+    bonus()

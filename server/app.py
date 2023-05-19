@@ -113,24 +113,24 @@ db = client['clientbase']  # database
 collection = db['users']
 
 table = db['bonus']
-data = {
-    'glass 1': 10,
-    'glass 2': 12,
-    'glass 3': 15,
-    'glass 4': 18,
-    'glass 5^': 25,
-
-    '<0.150': 2,
-    '<0.250': 1.6,
-    '<0.400': 1.35,
-    '<0.600': 1.10,
-
-    'drinkaid': 0.5,
-    'penalty': 0.7
-}
-
-# Insert the document into the collection
-table.insert_one(data)
+# data = [
+#     {'glass 1': 10},
+#     {'glass 2': 12},
+#     {'glass 3': 15},
+#     {'glass 4': 18},
+#     {'glass 5^': 25},
+#
+#     { '<0.150': 2},
+#     {'<0.250': 1.6},
+#     {'<0.400': 1.35},
+#     {'<0.600': 1.10},
+#
+#     {'drinkaid': 0.5},
+#     {'penalty': 0.7}
+# ]
+#
+# # Insert the document into the collection
+# table.insert_many(data)
 
 
 @app.route("/data", methods=["POST"])
@@ -163,14 +163,6 @@ def update_data():
     query = {
         "document_id": data["document_id"]
     }
-
-    # query2 = {
-    #     "FirstName": data['FirstName'],
-    #     "LastName": data['LastName'],
-    #     "DOB": data['DOB'],
-    #     "Contact": data['Contact'],
-    #     "Email": data['Email']
-    # }
 
     # Query the database
     result = collection.find_one(ObjectId(query["document_id"]))
@@ -231,12 +223,12 @@ def delete_data():
 def cup_count(document_id):
     data = request.get_json()
 
-    if not data['params']["document_id"]:
+    if not data["document_id"]:
         response = {"error": "Invalid payload. Missing 'document_id'."}
         return jsonify(response), 400
 
     query = {
-        "document_id": data['params']["document_id"]
+        "document_id": data["document_id"]
     }
     document = collection.find_one({"_id": ObjectId(document_id)})
 
@@ -292,25 +284,63 @@ def reaction_time(document_id):
         else:
             response = {"status": "failed"}
 
-        collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"status": status}})
+        collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"status": status, "time": time}})
         return jsonify(response)
 
     else:
         return jsonify({'error': 'Document not found'})
 
-# @app.route('/<document_id>/bonus', methods=['POST'])
-# def bonus_chart(document_id):
-#     data = request.get_json()
-#
-#     query = {
-#         "document_id": data["document_id"]
-#     }
-#
-#     document = collection.find_one(ObjectId(document_id))
-#     if document:
-#
-#
-#         return jsonify()
+@app.route('/<document_id>/bonus', methods=['POST'])
+def bonus_chart(document_id):
+    data = request.get_json()
+
+    query = {
+        "document_id": data["document_id"]
+    }
+
+    document = collection.find_one(ObjectId(document_id))
+    if document:
+        current_cups = document.get('cups', 0)
+        time = document.get('time', 0)
+
+        def check_timing(time, table):
+            if time < 0.150:
+                return table.get({"<0.150": 2})
+            elif 0.151 <= time <= 0.250:
+                return table.get({"<0.250": 1.6})
+            elif 0.251 <= time <= 0.400:
+                return table.get({"<0.400": 1.35})
+            elif 0.401 <= time <= 0.600:
+                return table.get({"<0.600": 1.1})
+            else:
+                return 0
+
+        table = db['bonus']
+
+        if current_cups in range(1, 5):
+            glass_name = f'glass {current_cups}'
+            query = {glass_name: {'$exists': True}}
+            cursor = table.find(query)
+            result = []
+            for doc in cursor:
+                result.append(doc)
+
+            if result:
+                points = result[0].get(glass_name)
+
+        elif current_cups >= 6:
+            result = table.find_one({"glass 5": 25})
+        else:
+            result = 0
+
+        if result is not None:
+            bonus_multiplier = check_timing(time, table)
+            final = bonus_multiplier*points
+            print(final)
+
+    response = {"message": f"{final} is the total bonus"}
+
+    return jsonify(response)
 
 
 if __name__ == '__main__':
