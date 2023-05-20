@@ -293,6 +293,8 @@ def reaction_time(document_id):
 @app.route('/<document_id>/bonus', methods=['POST'])
 def bonus_chart(document_id):
     data = request.get_json()
+    points = None
+    points_6 = None
 
     query = {
         "document_id": data["document_id"]
@@ -305,13 +307,56 @@ def bonus_chart(document_id):
 
         def check_timing(time, table):
             if time < 0.150:
-                return table.get({"<0.150": 2})
+                pt1 = None
+                q1 = {"<0.150": {'$exists': True}}
+                cur1 = table.find(q1)
+
+                r1 = []
+                for doc in cur1:
+                    r1.append(doc)
+
+                if r1:
+                    pt1 = r1[0].get("<0.150")
+                return pt1
+
             elif 0.151 <= time <= 0.250:
-                return table.get({"<0.250": 1.6})
+                pt2 = None
+                q2 = {"<0.250": {'$exists': True}}
+                cur2 = table.find(q2)
+
+                r2 = []
+                for doc in cur2:
+                    r2.append(doc)
+
+                if r2:
+                    pt2 = r2[0].get("<0.250")
+                return pt2
+
             elif 0.251 <= time <= 0.400:
-                return table.get({"<0.400": 1.35})
+                pt3 = None
+                q3 = {"<0.400": {'$exists': True}}
+                cur3 = table.find(q3)
+
+                r3 = []
+                for doc in cur3:
+                    r3.append(doc)
+
+                if r3:
+                    pt3 = r3[0].get("<0.400")
+                return pt3
+
             elif 0.401 <= time <= 0.600:
-                return table.get({"<0.600": 1.1})
+                pt4 = None
+                q4 = {"<0.600": {'$exists': True}}
+                cur4 = table.find(q4)
+
+                r4 = []
+                for doc in cur4:
+                    r4.append(doc)
+
+                if r4:
+                    pt4 = r4[0].get("<0.600")
+                return pt4
             else:
                 return 0
 
@@ -329,13 +374,20 @@ def bonus_chart(document_id):
                 points = result[0].get(glass_name)
 
         elif current_cups >= 6:
-            result = table.find_one({"glass 5": 25})
-        else:
-            result = 0
+            c = table.find({"glass 5^": 25})
+            results = []
+            for doc in c:
+                results.append(doc)
 
-        if result is not None:
+            if results:
+                points_6= results[0].get('glass 5^')
+        else:
+            points = 0
+
+        if points or points_6:
+            print()
             bonus_multiplier = check_timing(time, table)
-            final = bonus_multiplier*points
+            final = bonus_multiplier*points or points_6
             print(final)
 
     response = {"message": f"{final} is the total bonus"}
