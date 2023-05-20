@@ -1,9 +1,5 @@
-# import uuid
 from pymongo import MongoClient
 from bson import ObjectId
-
-
-
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
@@ -247,7 +243,6 @@ def cup_count(document_id):
         response = {"message": "Data not found, please sign up"}
         return jsonify(response)
 
-
 @app.route('/<document_id>/cup-update', methods=['POST'])
 def cup_update(document_id):
     data = request.get_json()
@@ -428,6 +423,7 @@ def discount(document_id):
         status = document.get('status', 0)
         if status:
             cup_count = document.get('cups', 0)
+            cup_count = cup_count + 1
             if cup_count in [1, 2]:
                 beer_disc = f'beer disc{cup_count}'
                 query = {beer_disc: {'$exists': True}}
@@ -469,7 +465,19 @@ def discount(document_id):
             response = {'message': 'there is no discount available'}
             return jsonify(response)
 
+@app.route('/<document_id>/check-out', methods=['POST'])
+def check_out(document_id):
+    data = request.get_json()
+    query = {
+        "document_id": data["document_id"]
+    }
 
+    document = collection.find_one({"_id": ObjectId(document_id)})
+    if document:
+        pass
+
+    else:
+        pass
 
 if __name__ == '__main__':
     app.run()
