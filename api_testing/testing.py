@@ -178,7 +178,7 @@ def updatecup_request():  # when they purchase a cup
 def reaction_time():
     payload = {
         "document_id": str(ObjectId("646658965fdece05d6082923")),
-        "time": 0.790
+        "time": 0.399
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/reaction-time'
@@ -220,8 +220,7 @@ def bonus():
 
 def discount():
     payload = {
-        "document_id": str(ObjectId("646658965fdece05d6082923")),
-        "button_ids" : ['discount_button', 'cancel_button', 'normal_button']
+        "document_id": str(ObjectId("646658965fdece05d6082923"))
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/discount'
@@ -310,4 +309,4 @@ if __name__ == '__main__':
     # updatecup_request()
     # reaction_time()
     # bonus()
-    discount()
+    # discount()

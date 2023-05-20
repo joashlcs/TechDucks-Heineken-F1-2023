@@ -423,12 +423,12 @@ def discount(document_id):
     }
     # Find the document in MongoDB
     document = collection.find_one(ObjectId(document_id))
-
+    price = 10
     if document:
         status = document.get('status', 0)
         if status:
             cup_count = document.get('cups', 0)
-            if cup_count == 1 or 2:
+            if cup_count in [1, 2]:
                 beer_disc = f'beer disc{cup_count}'
                 query = {beer_disc: {'$exists': True}}
                 cursor = table.find(query)
@@ -451,23 +451,23 @@ def discount(document_id):
                     beer_discount = results[0].get('beer disc3^')
 
             if beer_discount or beer_discount1:
-                price = 10
                 if beer_discount1 is not None:
-                    final = price * beer_discount1
-                    dd = 100 - beer_discount1
-                    response = {"message": f""}
+                    final1 = price * beer_discount1
+                    dd1 = round((1 - beer_discount1) * 100, 2)
+                    response = {"message": f"discount: {dd1}%\ndiscounted price: {final1}"}
+
+                    return jsonify(response)
+
                 else:
                     final = price * beer_discount
-                    dd = 100 - beer_discount
+                    dd = round((1 - beer_discount) * 100, 2)
+                    response = {"message": f"discount: {dd}%\ndiscounted price: {final}"}
 
-                    return final, price
-
-
-
+                    return jsonify(response)
 
         else:
-            response = {'message': 'there is no discount available!'}
-            pass
+            response = {'message': 'there is no discount available'}
+            return jsonify(response)
 
 
 
