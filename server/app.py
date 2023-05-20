@@ -127,6 +127,11 @@ table = db['bonus']
 #
 #     {'drinkaid': 0.5},
 #     {'penalty': 0.7}
+
+    # {'beer disc1': 0.9},
+    # {'beer disc2': 0.85},
+    # {'beer disc3^': 0.8}
+
 # ]
 #
 # # Insert the document into the collection
@@ -390,23 +395,80 @@ def bonus_chart(document_id):
                 bonus_multiplier = check_timing(time, table)
                 if points is not None:
                     final = bonus_multiplier * points
-                    return final
+                    return final, bonus_multiplier
                 else:
                     final = bonus_multiplier * points_6
-                    return final
+                    return final, bonus_multiplier
 
         fpoint = document.get('final_point', 0)
-        if fpoint is not 0:  # there is alr a prev record
-            pt_update = cup()
+        if fpoint != 0:  # there is alr a prev record
+            pt_update, discount_percent = cup()
             final = fpoint + pt_update
             collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
 
         else:
-            final = cup()
+            final, discount_percent = cup()
             collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
 
     response = {"message": f"you have {final} points"}
     return jsonify(response)
+
+@app.route('/<document_id>/discount', methods=['POST'])
+def discount(document_id):
+    data = request.get_json()
+    beer_discount = None
+    beer_discount1 = None
+    query = {
+        "document_id": data["document_id"]
+    }
+    # Find the document in MongoDB
+    document = collection.find_one(ObjectId(document_id))
+
+    if document:
+        status = document.get('status', 0)
+        if status:
+            cup_count = document.get('cups', 0)
+            if cup_count == 1 or 2:
+                beer_disc = f'beer disc{cup_count}'
+                query = {beer_disc: {'$exists': True}}
+                cursor = table.find(query)
+                result = []
+                beer_discount1 = 0
+                for doc in cursor:
+                    result.append(doc)
+
+                if result:
+                    beer_discount1 = result[0].get(f'{beer_disc}')
+
+            elif cup_count >= 3:
+                beer_disc = table.find({"beer disc3^": 0.8})
+                results = []
+                beer_discount = 0
+                for b in beer_disc:
+                    results.append(b)
+
+                if results:
+                    beer_discount = results[0].get('beer disc3^')
+
+            if beer_discount or beer_discount1:
+                price = 10
+                if beer_discount1 is not None:
+                    final = price * beer_discount1
+                    dd = 100 - beer_discount1
+                    response = {"message": f""}
+                else:
+                    final = price * beer_discount
+                    dd = 100 - beer_discount
+
+                    return final, price
+
+
+
+
+        else:
+            response = {'message': 'there is no discount available!'}
+            pass
+
 
 
 if __name__ == '__main__':

@@ -178,7 +178,7 @@ def updatecup_request():  # when they purchase a cup
 def reaction_time():
     payload = {
         "document_id": str(ObjectId("646658965fdece05d6082923")),
-        "time": 0.210
+        "time": 0.790
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/reaction-time'
@@ -203,6 +203,28 @@ def bonus():
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/bonus'
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+    # send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload, headers=headers)
+
+    status_code = response.status_code
+    # content = response.content
+    print(f"Status Code: {status_code}")
+
+def discount():
+    payload = {
+        "document_id": str(ObjectId("646658965fdece05d6082923")),
+        "button_ids" : ['discount_button', 'cancel_button', 'normal_button']
+    }
+
+    url = f'http://127.0.0.1:5000/{payload["document_id"]}/discount'
 
     headers = {
         "Content-Type": "application/json"
@@ -276,6 +298,7 @@ def bonus():
 
 
 
+
 if __name__ == '__main__':
     pass
     # print(post_request())
@@ -287,3 +310,4 @@ if __name__ == '__main__':
     # updatecup_request()
     # reaction_time()
     # bonus()
+    discount()
