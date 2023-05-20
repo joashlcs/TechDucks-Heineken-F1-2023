@@ -178,7 +178,7 @@ def updatecup_request():  # when they purchase a cup
 def reaction_time():
     payload = {
         "document_id": str(ObjectId("646658965fdece05d6082923")),
-        "time": 0.341
+        "time": 0.210
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/reaction-time'
@@ -277,7 +277,7 @@ def bonus():
 
 
 if __name__ == '__main__':
-    # pass
+    pass
     # print(post_request())
 
     # db_request()
@@ -286,4 +286,4 @@ if __name__ == '__main__':
     # getcup_request()
     # updatecup_request()
     # reaction_time()
-    bonus()
+    # bonus()

@@ -120,10 +120,10 @@ table = db['bonus']
 #     {'glass 4': 18},
 #     {'glass 5^': 25},
 #
-#     { '<0.150': 2},
-#     {'<0.250': 1.6},
-#     {'<0.400': 1.35},
-#     {'<0.600': 1.10},
+#     {'le 150ms': 2},
+#     {'le 250ms': 1.6},
+#     {'le 400ms': 1.35},
+#     {'le 600ms': 1.10},
 #
 #     {'drinkaid': 0.5},
 #     {'penalty': 0.7}
@@ -293,8 +293,7 @@ def reaction_time(document_id):
 @app.route('/<document_id>/bonus', methods=['POST'])
 def bonus_chart(document_id):
     data = request.get_json()
-    points = None
-    points_6 = None
+    table = db['bonus']
 
     query = {
         "document_id": data["document_id"]
@@ -304,94 +303,109 @@ def bonus_chart(document_id):
     if document:
         current_cups = document.get('cups', 0)
         time = document.get('time', 0)
+        table = db['bonus']
 
         def check_timing(time, table):
             if time < 0.150:
                 pt1 = None
-                q1 = {"<0.150": {'$exists': True}}
+                q1 = {"le 150ms": {'$exists': True}}
                 cur1 = table.find(q1)
 
                 r1 = []
-                for doc in cur1:
-                    r1.append(doc)
+                for doc1 in cur1:
+                    r1.append(doc1)
 
                 if r1:
-                    pt1 = r1[0].get("<0.150")
+                    pt1 = r1[0].get("le 150ms")
                 return pt1
 
             elif 0.151 <= time <= 0.250:
                 pt2 = None
-                q2 = {"<0.250": {'$exists': True}}
+                q2 = {"le 250ms": {'$exists': True}}
                 cur2 = table.find(q2)
 
                 r2 = []
-                for doc in cur2:
-                    r2.append(doc)
+                for doc2 in cur2:
+                    r2.append(doc2)
 
                 if r2:
-                    pt2 = r2[0].get("<0.250")
+                    pt2 = r2[0].get("le 250ms")
                 return pt2
 
             elif 0.251 <= time <= 0.400:
                 pt3 = None
-                q3 = {"<0.400": {'$exists': True}}
+                q3 = {"le 400ms": {'$exists': True}}
                 cur3 = table.find(q3)
 
                 r3 = []
-                for doc in cur3:
-                    r3.append(doc)
+                for doc3 in cur3:
+                    r3.append(doc3)
 
                 if r3:
-                    pt3 = r3[0].get("<0.400")
+                    pt3 = r3[0].get("le 400ms")
                 return pt3
 
             elif 0.401 <= time <= 0.600:
                 pt4 = None
-                q4 = {"<0.600": {'$exists': True}}
+                q4 = {"le 600ms": {'$exists': True}}
                 cur4 = table.find(q4)
 
                 r4 = []
-                for doc in cur4:
-                    r4.append(doc)
+                for doc4 in cur4:
+                    r4.append(doc4)
 
                 if r4:
-                    pt4 = r4[0].get("<0.600")
+                    pt4 = r4[0].get("le 600ms")
                 return pt4
             else:
                 return 0
 
-        table = db['bonus']
+        def cup():
+            points = None
+            points_6 = None
 
-        if current_cups in range(1, 5):
-            glass_name = f'glass {current_cups}'
-            query = {glass_name: {'$exists': True}}
-            cursor = table.find(query)
-            result = []
-            for doc in cursor:
-                result.append(doc)
+            if current_cups in range(1, 5):
+                glass_name = f'glass {current_cups}'
+                query = {glass_name: {'$exists': True}}
+                cursor = table.find(query)
+                result = []
+                points = 0
+                for doc in cursor:
+                    result.append(doc)
 
-            if result:
-                points = result[0].get(glass_name)
+                if result:
+                    points = result[0].get(glass_name)
 
-        elif current_cups >= 6:
-            c = table.find({"glass 5^": 25})
-            results = []
-            for doc in c:
-                results.append(doc)
+            elif current_cups >= 6:
+                c = table.find({"glass 5^": 25})
+                results = []
+                points_6 = 0
+                for docs in c:
+                    results.append(docs)
 
-            if results:
-                points_6= results[0].get('glass 5^')
+                if results:
+                    points_6 = results[0].get('glass 5^')
+
+            if points or points_6:
+                bonus_multiplier = check_timing(time, table)
+                if points is not None:
+                    final = bonus_multiplier * points
+                    return final
+                else:
+                    final = bonus_multiplier * points_6
+                    return final
+
+        fpoint = document.get('final_point', 0)
+        if fpoint is not 0:  # there is alr a prev record
+            pt_update = cup()
+            final = fpoint + pt_update
+            collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
+
         else:
-            points = 0
+            final = cup()
+            collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
 
-        if points or points_6:
-            print()
-            bonus_multiplier = check_timing(time, table)
-            final = bonus_multiplier*points or points_6
-            print(final)
-
-    response = {"message": f"{final} is the total bonus"}
-
+    response = {"message": f"you have {final} points"}
     return jsonify(response)
 
 
