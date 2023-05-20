@@ -413,9 +413,7 @@ def discount(document_id):
     data = request.get_json()
     beer_discount = None
     beer_discount1 = None
-    query = {
-        "document_id": data["document_id"]
-    }
+
     # Find the document in MongoDB
     document = collection.find_one(ObjectId(document_id))
     price = 10
@@ -465,19 +463,70 @@ def discount(document_id):
             response = {'message': 'there is no discount available'}
             return jsonify(response)
 
-@app.route('/<document_id>/check-out', methods=['POST'])
+
+app.route('/<document_id>/check-out', methods=['POST'])
 def check_out(document_id):
     data = request.get_json()
-    query = {
-        "document_id": data["document_id"]
-    }
+
+    button = data.get("button_id")
 
     document = collection.find_one({"_id": ObjectId(document_id)})
-    if document:
-        pass
 
+    if document and button == 'free_drinkaid_button':
+        da = document.get('current_drinkaid', 0)
+        nda = da + 1
+
+        collection.update_one({"_id": ObjectId(document_id)}, {"$set": {"current_drinkaid": nda}})
+        responseaidfree = {"message": "Checked out successfully with discounted drinkaid"}
+
+        return jsonify(responseaidfree), 200
+
+    elif document and button == 'discount_beer_button':
+        responsebeer = {"message": "Checked out successfully with beer discount"}
+        return jsonify(responsebeer), 200
     else:
-        pass
+        response400 = {"error": "Invalid data received"}
+        return jsonify(response400), 400
+
+
+@app.route('/<document_id>/check-out-false', methods=['POST'])
+def check_out_fail(document_id):
+    data = request.get_json()
+
+    button = data.get("button_id")
+
+    document = collection.find_one({"_id": ObjectId(document_id)})
+
+    if document and button == 'normal_beer_button':
+        responsenorm = {"message": "Checked out successfully with NO discounted beer"}
+        return jsonify(responsenorm), 200
+
+    elif document and button == 'discount_drinkaid_button':
+
+        da = document.get('current_drinkaid', 0)
+        nda = da + 1
+        collection.update_one({"_id": ObjectId(document_id)}, {"$set": {"current_drinkaid": nda}})
+
+        da_disc = table.find({"drinkaid": 0.5})
+        resultsaid = []
+        da_discount = 0
+        price = 10
+        for o in da_disc:
+            resultsaid.append(o)
+
+        if resultsaid:
+            da_discount = resultsaid[0].get('drinkaid')
+
+        if da_discount is not None:
+            finald = price * da_discount
+            ddd = round((1 - da_discount) * 100, 2)
+
+            responseaid = {"message": f"discount: {ddd}%\ndiscounted price: {finald}, Checked out successfully with discounted drinkaid"}
+
+            return jsonify(responseaid), 200
+    else:
+        response401 = {"error": "Invalid data received"}
+        return jsonify(response401), 400
 
 if __name__ == '__main__':
     app.run()

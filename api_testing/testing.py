@@ -241,11 +241,35 @@ def discount():
 
 def checkoutbutton():
     payload = {
-        "document_id": str(ObjectId("646658965fdece05d6082923"))
-        ["button"]
+        "document_id": str(ObjectId("646658965fdece05d6082923")),
+        # "button_id": "discount_beer_button"
+        "button_id": "freedrinkaid_button"
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/check-out'
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+    # send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload, headers=headers)
+
+    status_code = response.status_code
+    # content = response.content
+    print(f"Status Code: {status_code}")
+
+def checkoutbutton_fail():
+    payload = {
+        "document_id": str(ObjectId("646658965fdece05d6082923")),
+        "button_id": "discount_drinkaid_button"
+        # "button_id": "normal_beer_button"
+    }
+
+    url = f'http://127.0.0.1:5000/{payload["document_id"]}/check-out-false'
 
     headers = {
         "Content-Type": "application/json"
@@ -331,5 +355,6 @@ if __name__ == '__main__':
     # updatecup_request()
     # reaction_time()
     # bonus()
-    discount()
+    # discount()
     # checkoutbutton()
+    checkoutbutton_fail()
