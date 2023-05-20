@@ -30,7 +30,9 @@ export default {
     console.log(`User ID: ${resultData}`);
   },
   mounted() {
-    this.startScan();
+    setTimeout(() => {
+      this.startScan();
+    }, 5000);
   },
   beforeDestroy() {
     this.stopScan();

@@ -40,6 +40,8 @@
 
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
@@ -61,6 +63,33 @@ export default {
     console.log(`User ID: ${resultData}`);
   },
   methods: {
+    bestReactionTime() {
+      console.log(this.userid)
+      if (this.user_id === null) {
+        console.log("Missing document_id");
+        return Promise.reject("Missing document_id");
+      }
+
+      const payload = {
+        document_id: this.user_id,
+        time: this.bestTime,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.user_id}/reaction-time`;
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error; // Re-throw the error to be caught by the caller
+        });
+    },
     startRace() {
       this.timediff = null;
       this.jumpStart = false;
@@ -119,6 +148,9 @@ export default {
         }
       }
       if (this.retryCounter === 3) {
+        this.bestReactionTime()
+            .then((response) => {
+              console.log(`Response Data: ${response.data.status}`)})
         if (this.bestTime <= 0.6 && this.bestTime !== null) {
           console.log(this.bestTime)
           const status = "passed";

@@ -36,7 +36,7 @@ export default {
       msg: '',
       userid: null,
       result: null,
-      timeLeft: 1000,
+      timeLeft: 10,
       percentageOff: 10,
     };
   },

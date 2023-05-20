@@ -6,6 +6,7 @@ import reactionTest from "@/components/ReactionTest.vue";
 import FirstBeer from "@/components/FirstBeer.vue";
 import ConsecutiveBeers from "@/components/ConsecutiveBeers.vue";
 import CupCollection from "@/components/CupCollection.vue";
+import Leaderboard from "@/components/Leaderboard.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,7 +45,13 @@ const router = createRouter({
     path: "/consecutivebeer/:id/:result",
     name: "consecutivebeer",
     component: ConsecutiveBeers
-  },
+    },
+    {
+    path: "/leaderboard/:id",
+    name: "leaderboard",
+    component: Leaderboard
+    },
+
   ]
 })
 
