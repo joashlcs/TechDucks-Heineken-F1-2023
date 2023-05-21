@@ -1,8 +1,19 @@
+import json
+
 from pymongo import MongoClient
 from bson import ObjectId
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, ObjectId):
+            return str(obj)
+        return super().default(obj)
+
+app = Flask(__name__)
+app.json_encoder = CustomJSONEncoder
 
 # BOOKS = [
 #     {
@@ -26,11 +37,10 @@ from flask_cors import CORS
 # ]
 
 # instantiate the app
-app = Flask(__name__)
 app.config.from_object(__name__)
+CORS(app, resources={r'/*': {'origins': '*'}})
 
 # enable CORS
-CORS(app, resources={r'/*': {'origins': '*'}})
 #
 #
 # def remove_book(book_id):
@@ -42,6 +52,7 @@ CORS(app, resources={r'/*': {'origins': '*'}})
 #
 #
 # # sanity check route
+
 # @app.route('/ping', methods=['GET'])
 # def ping_pong():
 #     return jsonify('pong!')
@@ -235,7 +246,7 @@ def cup_count(document_id):
 
     if document:
         # Get the cup count
-        cups = 0  # or any other initial value
+        cups = document.get('cups', 0)
         collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"cups": cups}})
         response = {'cups': cups}
         return jsonify(response)
@@ -543,22 +554,46 @@ def leaderboard():
     button = data.get("button_id")
 
     if button == "top_3":
-        sort_criteria = [('FirstName', 1), ('LastName', 1), ('total_points', 1)]
-        result = collection.find().sort(sort_criteria).limit(3)
+        result = collection.find().sort("final_point", -1).limit(3)
 
         # Clear existing ranks
         collection.update_many({}, {'$unset': {'rank': 1}})
 
         top3 = []
-        rank = 1
+        rank = 0
         for document in result:
             document_id = document['_id']
-            collection.update_one({'_id': document_id}, {'$set': {'rank': rank}})
             rank += 1
+            collection.update_one({'_id': ObjectId(document_id)}, {'$set': {'rank': rank}})
             top3.append(document)
 
-        response = {"top 3 in the leaderboard": top3}
+        first = collection.find_one(top3[0])
+        second = collection.find_one(top3[1])
+        third = collection.find_one(top3[2])
+
+        response = {"first in the leaderboard": first,
+                    "second in the leaderboard": second,
+                    "third in the leaderboard": third}
         return jsonify(response)
+
+@app.route('/leaderboard/<document_id>', methods=['POST'])
+def leaderboard_personal(document_id):
+    data = request.get_json()
+
+    document = collection.find_one(ObjectId(document_id))
+    if document:
+        # sort_criteria = [('FirstName', 1), ('LastName', 1), ('final_point', 1)]
+        result_ranks = collection.find().sort('final_point', -1)
+        rank = 0
+        for documents in result_ranks:
+            document_ids = documents['_id']
+            rank += 1
+            collection.update_one({'_id': ObjectId(document_ids)}, {'$set': {'rank': rank}})
+
+        collect_rank = collection.find_one(ObjectId(document_id), {'rank': 1})
+        response = {'user rank': collect_rank}
+        return jsonify(response)
+
 
 if __name__ == '__main__':
     app.run()
