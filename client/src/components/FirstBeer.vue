@@ -39,14 +39,14 @@ import QRCodeScanner from "@/components/QRCodeScanner.vue";
 import axios from "axios";
 
 export default {
-  name: 'LandingPage',
   data() {
     return {
       msg: '',
       userid: '',
       result: null,
-      timeLeft: 1000,
+      timeLeft: 10,
       percentageOff: 10,
+      landingPagePushed: false,
     };
   },
   components: {
@@ -61,7 +61,9 @@ export default {
     // Start the countdown timer
     this.getPercentageOff()
       .then((response) => {
-        console.log(response)
+        const data = response.data;
+        this.percentageOff = data.discount_percentage;
+        console.log(this.percentageOff)
       })
       .catch((error) => {
         console.log(error);
@@ -69,17 +71,48 @@ export default {
     this.startCountdown();
   },
   methods: {
-    getMessage() {
-      // Your existing code here
+    updateCupCount() {
+      if (this.userid === '') {
+        console.log("Missing document_id");
+        return Promise.reject("Missing document_id");
+      }
+
+      const payload_landing = {
+        document_id: this.userid,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/cup-update`;
+
+      return axios.post(path, payload_landing, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error; // Re-throw the error to be caught by the caller
+        });
     },
     goToLandingPage() {
-      this.$router.push('/');
+      if (!this.landingPagePushed) {
+        this.landingPagePushed = true; // Set the flag to indicate that landing page has been pushed
+        this.$router.push('/');
+      }
     },
     startCountdown() {
       setInterval(() => {
         if (this.timeLeft > 0) {
           this.timeLeft--;
         } else {
+          if (this.result === 'passed') {
+            if (!this.landingPagePushed) {
+              console.log("Updating Cup Count by 1");
+              this.updateCupCount(); // Call updateCupCount only when result is "passed"
+            }
+          }
           this.goToLandingPage();
         }
       }, 1000);
@@ -112,6 +145,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 h1 {

@@ -26,6 +26,7 @@
           <p class="mt-4">@ the heineken store</p>
         </div>
         <img class="mt-3-heineken slide-right img-2" src="../assets/right-arrow-double.png"/>
+        <p v-if="countdowntimer >= 0" class="smaller-text">Returning to home in {{ countdowntimer }}s...</p>
       </template>
     </div>
   </div>
@@ -41,6 +42,8 @@ export default {
       msg: '',
       userid: '',
       type: '',
+      countdowntimer: 7,
+      landingPagePushed: false,
     };
   },
   components: {
@@ -50,22 +53,25 @@ export default {
       const resultData = this.$route.params;
       this.userid = resultData.id;
       this.type = resultData.type;
+      if (this.type !== 'cashless') {
+        this.startCountdown();
+      }
   },
   methods: {
-    goToLogin() {
-      this.$router.push('/login')
+    goToLandingPage() {
+      if (!this.landingPagePushed) {
+        this.landingPagePushed = true;
+        this.$router.push('/');
+      }
     },
-    getMessage() {
-
-      const path = 'http://127.0.0.1:5000/ping';
-      axios.get(path)
-          .then((res) => {
-            this.msg = res.data;
-          })
-          .catch((error) => {
-            // eslint-disable-next-line
-            console.error(error);
-          });
+    startCountdown() {
+      setInterval(() => {
+        if (this.countdowntimer > 0) {
+          this.countdowntimer--;
+        } else {
+          this.goToLandingPage();
+        }
+      }, 1000);
     },
   }
 };
@@ -107,11 +113,6 @@ span {
 .background-heineken-green {
   background-color: #038135 !important;
   color: white !important;
-}
-
-.heineken-text-glow {
-  color: #FFD501;
-  text-shadow: 4px 4px 3px rgba(255, 213, 1, 0.9);
 }
 
 .slide-right {
@@ -169,12 +170,17 @@ span {
   z-index: 100;
   cursor: pointer;
   width: 50px;
-  margin-top: 40px;
+  margin-top: 20px;
   margin-left: auto;
   margin-right: auto;
   line-height: 60px;
   left: 0%;
   bottom: 10px;
+}
+
+.smaller-text {
+  margin-top: 20px;
+  font-size: 0.7rem;
 }
 
 </style>

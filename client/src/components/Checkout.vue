@@ -11,7 +11,7 @@
           <div class="card-body">
             <h5 class="card-title text-center">Heineken Beer</h5>
             <p class="card-text-2 text-center">Discount: {{ this.beerDiscount }}%</p>
-            <p class="card-text text-center">Price: ${{ this.beerPrice }}</p>
+            <p class="card-text text-center">Price: ${{ this.beerPrice.toFixed(2) }}</p>
           </div>
         </template>
         <img v-else class="img-limiter-drinkaid" src="../assets/drinkaid.webp" alt="Product Image" />
@@ -34,6 +34,8 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: 'Checkout',
   data () {
@@ -64,6 +66,7 @@ export default {
     cashlessMethod () {
       let price;
       if (this.type === 'beer') {
+        this.updateCupCount();
         price = this.beerPrice.toString().replace(".", "_")
       } else {
         price = this.drinkaidPrice.toString().replace(".", "_")
@@ -73,15 +76,74 @@ export default {
     cashMethod () {
       let price;
       if (this.type === 'beer') {
+        this.updateCupCount();
         price = this.beerPrice.toString().replace(".", "_")
       } else {
         price = this.drinkaidPrice.toString().replace(".", "_")
       }
       this.$router.push(`/payment/${this.userid}/cash/${this.type}/${price}`);
     },
+    updateCupCount() {
+      if (this.userid === '') {
+        console.log("Missing document_id");
+        return Promise.reject("Missing document_id");
+      }
+
+      const payload_landing = {
+        document_id: this.userid,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/cup-update`;
+
+      return axios.post(path, payload_landing, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          console.log("Cup Count + 1")
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
     getBeerDiscount() {
-      //call api get discount of subsequent beer
-      // Update beer price
+      this.getBeerPercentageOff()
+        .then((response) => {
+          const data = response.data;
+          this.beerDiscount = data.discount_percentage;
+          this.beerPrice = data.final_price;
+          console.log(this.beerDiscount)
+          console.log(this.beerPrice)
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+    getBeerPercentageOff() {
+      if (this.userid === '') {
+        console.log("Missing document_id");
+        return Promise.reject("Missing document_id");
+      }
+
+      const payload_landing = {
+        document_id: this.userid,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/discount`;
+
+      return axios.post(path, payload_landing, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error; // Re-throw the error to be caught by the caller
+        });
     }
   }
 }

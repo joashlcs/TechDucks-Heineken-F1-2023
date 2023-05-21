@@ -9,6 +9,7 @@ import CupCollection from "@/components/CupCollection.vue";
 import Leaderboard from "@/components/Leaderboard.vue";
 import Payment from "@/components/Payment.vue";
 import Checkout from "@/components/Checkout.vue";
+import PaymentSuccessful from "@/components/PaymentSuccessful.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -59,11 +60,15 @@ const router = createRouter({
     component: Payment
     },
     {
+    path: "/payment_success/:id",
+    name: "paymentsuccess",
+    component: PaymentSuccessful
+    },
+    {
     path: "/leaderboard/:id",
     name: "leaderboard",
     component: Leaderboard
     },
-
   ]
 })
 

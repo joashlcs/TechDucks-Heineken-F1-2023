@@ -52,7 +52,7 @@ export default {
       userid: null,
       result: null,
       timeLeft: 15,
-      percentageOff: 10,
+      percentageOff: 0,
       final_decision: null,
       product: "beer"
     };
@@ -66,22 +66,21 @@ export default {
     this.result = resultData.result;
     console.log(`User ID: ${this.userid}`);
     console.log(`User ID: ${this.result}`);
-    // this.startCountdown(); // Start the countdown timer
     this.getPercentageOff();
   },
   methods: {
-    finalDecision() {
-      if (this.user_id === null) {
+    cancelButttonAPI() {
+      if (this.userid === null) {
         console.log("Missing user_id");
         return Promise.reject("Missing user_id");
       }
 
       const payload = {
-        document_id: this.user_id,
-        finalDecision: this.final_decision,
+        document_id: this.userid,
+        button_id: "normal_beer_button",
         read: true
       };
-      const path = `http://127.0.0.1:5000/${this.user_id}/cup-count`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `http://127.0.0.1:5000/${this.userid}/check-out-false`; // Call API to update final buying decision of drinkaid after consecutive failing
 
       return axios.post(path, payload, {
         headers: {
@@ -93,13 +92,15 @@ export default {
         })
         .catch((error) => {
           console.log(error);
-          throw error; // Re-throw the error to be caught by the caller
+          throw error;
         });
     },
     cancelButton() {
       this.final_decision = false;
-      this.finalDecision()
+      this.cancelButttonAPI()
         .then((response) => {
+          console.log("Rejected discounted Drinkaid")
+          console.log(response)
           this.$router.push('/');
         })
         .catch((error) => {
@@ -108,16 +109,19 @@ export default {
     },
     drinkaid() {
       if (this.result === 'passed') {
+        this.freeDrinkAidAPI()
+        console.log("Free Drink Aid Logged")
         this.$router.push(`/checkout/drinkaid/${this.userid}/free`)
       } else {
+        this.discountedDrinkAidAPI()
+        console.log("Discounted Drink Aid Logged")
         this.$router.push(`/checkout/drinkaid/${this.userid}/discounted`)
       }
     },
     checkout() {
+      this.discountedBeerAPI()
+      console.log("Discounted Beer Logged")
       this.$router.push(`/checkout/beer/${this.userid}/discounted`)
-    },
-    goToLandingPage() {
-      this.$router.push('/');
     },
     startCountdown() {
       setInterval(() => {
@@ -129,8 +133,119 @@ export default {
       }, 1000);
     },
     getPercentageOff() {
-      // Call An API to get discount using discount chart.
-    }
+      this.getBeerPercentageOff()
+        .then((response) => {
+          const data = response.data;
+          this.percentageOff = data.discount_percentage;
+          console.log(this.percentageOff)
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
+    getBeerPercentageOff() {
+      if (this.userid === '') {
+        console.log("Missing document_id");
+        return Promise.reject("Missing document_id");
+      }
+
+      const payload_landing = {
+        document_id: this.userid,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/discount`;
+
+      return axios.post(path, payload_landing, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error;
+        });
+    },
+    freeDrinkAidAPI() {
+      if (this.userid === null) {
+        console.log("Missing userid");
+        return Promise.reject("Missing userid");
+      }
+
+      const payload = {
+        document_id: this.userid,
+        button_id: "free_drinkaid_button",
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/check-out`; // Call API to update final buying decision of drinkaid after consecutive failing
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error;
+        });
+    },
+    discountedDrinkAidAPI() {
+      if (this.user_id === null) {
+        console.log("Missing userid");
+        return Promise.reject("Missing userid");
+      }
+
+      const payload = {
+        document_id: this.userid,
+        button_id: "discount_drinkaid_button",
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/check-out-false`; // Call API to update final buying decision of drinkaid after consecutive failing
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error;
+        });
+    },
+    discountedBeerAPI() {
+      if (this.userid === null) {
+        console.log("Missing userid");
+        return Promise.reject("Missing userid");
+      }
+
+      const payload = {
+        document_id: this.userid,
+        button_id: "discount_beer_button",
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/check-out`; // Call API to update final buying decision of drinkaid after consecutive failing
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error;
+        });
+    },
   },
 };
 </script>

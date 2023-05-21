@@ -48,9 +48,9 @@ export default {
         this.scanner = new QrScanner(video, result => {
           this.payment_id = result.data;
 
-          if (this.user_id === this.payment_id) { // Check if cup belongs to user
+          if (this.payment_id === 'payment') {
             this.stopScan()
-            this.$router.push(`/leaderboard/${this.user_id}`);
+            this.$router.push(`/payment_success/${this.user_id}`);
           } else {
             this.message = 'Please use valid payment type!';
             this.showMessage = true;

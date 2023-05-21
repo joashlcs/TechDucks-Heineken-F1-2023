@@ -46,14 +46,7 @@ export default {
         headers: {
           'Content-Type': 'application/json'
         }
-      })
-        .then((response) => {
-          return response;
-        })
-        .catch((error) => {
-          console.log(error);
-          throw error; // Re-throw the error to be caught by the caller
-        });
+      });
     },
     startScan() {
       const video = document.getElementById('qrScanner');
@@ -64,10 +57,9 @@ export default {
         }
         this.scanner = new QrScanner(video, result => {
           this.user_id = result.data;
-          console.log(this.user_id)
+          console.log(`UserID is: ${this.user_id}`)
           this.valid()
             .then((response) => {
-              console.log(response);
               console.log(response.data.cups)
               if (response.data.cups > 0) {
                 this.stopScan()
@@ -78,13 +70,10 @@ export default {
               }
             })
             .catch((error) => {
-              console.log(error);
               this.message = 'Invalid QR code or User. Please use a valid one';
               this.showMessage = true;
               this.scanner.start();
-              this.startScan();
             });
-          this.stopScan()
         }, { returnDetailedScanResult: true });
         this.scanner.start();
       });

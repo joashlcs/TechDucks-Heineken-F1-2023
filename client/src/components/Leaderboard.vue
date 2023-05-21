@@ -40,7 +40,9 @@ export default {
   data() {
     return {
       position: "10th",
-      timeLeft: 100,
+      timeLeft: 10,
+      userid: '',
+      landingPagePushed: false,
       users: [
         {
           points: "1,051",
@@ -68,6 +70,7 @@ export default {
   },
   created() {
     const resultData = this.$route.params;
+    this.userid = resultData.id;
     console.log(`User ID: ${this.userid}`);
     this.getLeaderBoard();
     this.startCountdown(); // Start the countdown timer
@@ -75,7 +78,10 @@ export default {
   },
   methods: {
     goToLandingPage() {
-      this.$router.push('/');
+      if (!this.landingPagePushed) {
+        this.landingPagePushed = true;
+        this.$router.push('/');
+      }
     },
     startCountdown() {
       setInterval(() => {
