@@ -1,42 +1,51 @@
 <template>
   <div class="d-flex flex-wrap justify-content-center align-items-center flex-column col" style="height: 100vh;">
+
     <div class="logo">
       <img class="fit-picture" src="../assets/heineken.png"/>
     </div>
     <div v-if="result === 'passed'" class="text-center mt-1">
-      <img class="gif" src="../assets/congratulation.gif" alt="Looping GIF" loop>
-      <div class="m-4 text-center">
-        <h2>Congratulations! You're under 0.600s!</h2>
-        <h2>Present your QR code @ the stores for <b>{{ percentageOff }}%</b> off!</h2>
+      <div class="m-3 text-center">
+        <h2 class="fs-1">Congratulations!</h2>
+        <h2 class="fs-1">You're under 0.600s!</h2>
+        <img class="gif" src="../assets/congratulation.gif" alt="Looping GIF" loop>
+        <h2 class="mx-5">Present your QR code @ the stores for <b>{{ percentageOff }}%</b> off!</h2>
+      </div>
+      <div class="text-center mt-5">
+        <a href="/">
+          <p v-if="timeLeft >= 0">Returning to home in {{ timeLeft }} seconds...</p>
+        </a>
       </div>
     </div>
-    <div v-else class="text-center ">
-      <img class="gif big" src="../assets/firstbeer_failed.gif" alt="Looping GIF" loop>
-      <div>
-        <h2>Oh no! You're over 0.600s.</h2>
-        <h2>Try Again Tomorrow!</h2>
+    <div v-else class="text-center mt-3">
+      <div class="mb-3">
+        <h2 class="mt-2">Oh no!</h2>
+        <h2>You're <b>over</b> 0.600s.</h2>
+        <img class="gif big mt-1" src="../assets/firstbeer_failed.gif" alt="Looping GIF" loop>
+        <h2 class="mt-2">Try Again Tomorrow!</h2>
+        <p class="mt-3">*Hint: Don't drink before trying this out!*</p>
       </div>
-    </div>
-    <div class="text-center mt-3">
-      <a href="/">
-        <p v-if="timeLeft >= 0">Returning to home in {{ timeLeft }} seconds...</p>
-      </a>
+      <div class="text-center mt-5">
+        <a href="/">
+          <p v-if="timeLeft >= 0">Returning to home in {{ timeLeft }} seconds...</p>
+        </a>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
 import QRCodeScanner from "@/components/QRCodeScanner.vue";
+import axios from "axios";
 
 export default {
   name: 'LandingPage',
   data() {
     return {
       msg: '',
-      userid: null,
+      userid: '',
       result: null,
-      timeLeft: 10,
+      timeLeft: 1000,
       percentageOff: 10,
     };
   },
@@ -49,8 +58,15 @@ export default {
     this.result = resultData.result;
     console.log(`User ID: ${this.userid}`);
     console.log(`User ID: ${this.result}`);
-    this.startCountdown(); // Start the countdown timer
-    this.getPercentageOff();
+    // Start the countdown timer
+    this.getPercentageOff()
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+    this.startCountdown();
   },
   methods: {
     getMessage() {
@@ -69,13 +85,35 @@ export default {
       }, 1000);
     },
     getPercentageOff() {
-      // Call An API to discount using discount chart.
+      if (this.userid === '') {
+        console.log("Missing document_id");
+        return Promise.reject("Missing document_id");
+      }
+
+      const payload_landing = {
+        document_id: this.userid,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/discount`;
+
+      return axios.post(path, payload_landing, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error; // Re-throw the error to be caught by the caller
+        });
     }
   },
 };
 </script>
 
-<style>
+<style scoped>
 h1 {
   line-height: 1 !important;
 }

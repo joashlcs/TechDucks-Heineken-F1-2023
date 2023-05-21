@@ -1,37 +1,39 @@
 <template>
-  <div class="d-flex justify-content-center text-center align-items-center logo">
-    <img class="fit-picture" src="../assets/heineken.png" alt="logo"/>
-  </div>
-  <div class="d-flex flex-column align-items-center col">
-    <p class="text-center">Tap click when you're ready to race, then tap again when the lights go out.</p>
-    <p class="mb-0">Attempts Left: <b>{{ 3 - retryCounter }}</b></p>
-  </div>
-  <div v-if="jumpStart" class="d-flex justify-content-center align-items-center multiplier-2">
-    <div class="background-heineken-red pop-up-notice">JUMP START!</div>
-  </div>
-  <div v-else class="container mb-2">
-    <div class="light-strips">
-      <div v-for="(group, groupIndex) in lightOn" :key="groupIndex" class="light-group">
-        <div v-if="groupIndex % 4 === 0" class="background"></div>
-        <div v-for="(light, index) in group" :key="index" class="light-circle" :class="{ on: light }"></div>
-      </div>
-      <div class="light-bar"></div>
+  <div class="mt-5">
+    <div class="d-flex justify-content-center text-center align-items-center logo">
+      <img class="fit-picture" src="../assets/heineken.png" alt="logo"/>
     </div>
-  </div>
-  <div class="d-flex justify-content-center align-items-center flex-column">
-    <div class="mb-4">
-      <div class="row">
-        <div class="col-12 player-info">
-          <div>Time: {{ timediff }}</div>
-          <div>Best Time: {{ bestTime }}</div>
+    <div class="d-flex flex-column align-items-center col">
+      <p class="text-center mx-5 fs-5">Tap click when you're ready to race, then tap again when the lights go out.</p>
+      <p class="mb-0 fs-4">Attempts Left: <b>{{ 3 - retryCounter }}</b></p>
+    </div>
+    <div v-if="jumpStart" class="d-flex justify-content-center align-items-center multiplier-2">
+      <div class="background-heineken-red pop-up-notice">JUMP START!</div>
+    </div>
+    <div v-else class="container mb-2">
+      <div class="light-strips">
+        <div v-for="(group, groupIndex) in lightOn" :key="groupIndex" class="light-group">
+          <div v-if="groupIndex % 4 === 0" class="background"></div>
+          <div v-for="(light, index) in group" :key="index" class="light-circle" :class="{ on: light }"></div>
+        </div>
+        <div class="light-bar"></div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-center align-items-center flex-column">
+      <div class="mb-4">
+        <div class="row">
+          <div class="text-center col-12 player-info fs-4">
+            <div>Time: {{ timediff }}s</div>
+            <div>Best Time: {{ bestTime }}s</div>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="mb-3">
-      <div class="row">
-        <div class="col-12">
-          <button id="button" :disabled="retryCounter >= 3" v-if="!raceStarted" @click="startRace" class="btn btn-heineken background-heineken-green btn-lg m-3">Start Race</button>
-          <button id="button" v-else @click="finishRace" class="btn btn-heineken background-heineken-red btn-lg m-3">Finish Race</button>
+      <div class="mb-3">
+        <div class="row">
+          <div class="col-12">
+            <button id="button" :disabled="retryCounter >= 3" v-if="!raceStarted" @click="startRace" class="btn btn-heineken background-heineken-green btn-lg m-3">Start Race</button>
+            <button id="button" v-else @click="finishRace" class="btn btn-heineken background-heineken-red btn-lg m-3">Finish Race</button>
+          </div>
         </div>
       </div>
     </div>
@@ -49,8 +51,8 @@ export default {
       raceStarted: false,
       jumpStart: false,
       startTime: null,
-      timediff: null,
-      bestTime: null,
+      timediff: "0.000",
+      bestTime: "0.000",
       retryCounter: 0,
       userid: null,
       status: null,
@@ -71,11 +73,12 @@ export default {
       }
 
       const payload = {
-        document_id: this.user_id,
-        time: this.bestTime,
+        time: parseFloat(this.bestTime),
+        document_id: this.userid,
         read: true
       };
-      const path = `http://127.0.0.1:5000/${this.user_id}/reaction-time`;
+      const path = `http://127.0.0.1:5000/${this.userid}/reaction-time`;
+      console.log(path)
 
       return axios.post(path, payload, {
         headers: {
@@ -91,7 +94,7 @@ export default {
         });
     },
     startRace() {
-      this.timediff = null;
+      this.timediff = "0.000";
       this.jumpStart = false;
       this.raceStarted = true;
 
@@ -131,19 +134,20 @@ export default {
       }, 1000);
     },
     finishRace() {
+      let status;
       if (this.startTime === null) {
         this.jumpStart = true;
         this.raceStarted = false
         this.lightOn.forEach(subarray => subarray.fill(false));
         this.startTime = null;
-        this.timediff = null;
+        this.timediff = "0.000";
       } else {
         const endTime = Date.now();
         const timeDiff = (endTime - this.startTime) / 1000;
         this.timediff = timeDiff
         this.raceStarted = false
         this.startTime = null;
-        if (this.bestTime === null || timeDiff < this.bestTime) {
+        if (this.bestTime === "0.000" || this.timediff < this.bestTime) {
           this.bestTime = timeDiff;
         }
       }
@@ -151,14 +155,12 @@ export default {
         this.bestReactionTime()
             .then((response) => {
               console.log(`Response Data: ${response.data.status}`)})
-        if (this.bestTime <= 0.6 && this.bestTime !== null) {
-          console.log(this.bestTime)
-          const status = "passed";
+        if (this.bestTime <= 0.6 && this.bestTime !== "0.000") {
+          status = "passed";
           this.$router.push(`/${this.status}/${this.userid}/${status}`);
         }
         else {
-          console.log(this.bestTime)
-          const status = "failed";
+          status = "failed";
           this.$router.push(`/${this.status}/${this.userid}/${status}`);
         }
       }
@@ -229,10 +231,11 @@ export default {
 }
 
 .pop-up-notice {
-  width: 500px;
+  width: 350px;
   border-radius: 20px;
   text-align: center;
-  font-size: 5rem;
+  font-size: 3rem;
+  margin-bottom: 48px;
 }
 
 .background-heineken-green {

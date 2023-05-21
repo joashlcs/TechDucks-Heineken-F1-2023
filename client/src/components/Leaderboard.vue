@@ -1,6 +1,6 @@
 <template>
-  <div class="main-content">
-    <div class="d-flex flex-column align-items-center logo mt-3">
+  <div class="main-content" style="height: 100vh;">
+    <div class="d-flex flex-column align-items-center logo mt-5">
       <img class="fit-picture" src="../assets/heineken.png"/>
     </div>
     <h1 class="text-center">Here are our Top 3 Leaderboard!</h1>
@@ -19,17 +19,17 @@
               <p class="text-muted mt-1 mb-0">{{ user.ig_username }}</p>
               <hr>
               <div class="d-flex justify-content-center align-items-center flex-column">
-                <span><i class="fa fa-map-marker"></i> {{ user.country }}</span>
+                <span><i class="fa fa-map-marker"></i> {{ user.totalCups }} Cups</span>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="d-flex flex-column align-items-center">
+    <div class="d-flex flex-column align-items-center mt-4">
       <h3 class="text-center user p-2">Nice Try! You came in {{ this.position }}!</h3>
     </div>
-    <div class="d-flex flex-column align-items-center">
+    <div class="d-flex flex-column align-items-center mt-3">
       <p class="small-print">Returning to home in {{ this.timeLeft }}s</p>
     </div>
   </div>
@@ -40,28 +40,28 @@ export default {
   data() {
     return {
       position: "10th",
-      timeLeft: 10,
+      timeLeft: 100,
       users: [
         {
           points: "1,051",
           name: "Sandeep Sandy",
           position: "2nd",
           ig_username: "@sandeep",
-          country: "Bangalore"
+          totalCups: 13
         },
         {
           points: "1,254",
           name: "Kiran Acharya",
           position: "1st",
           ig_username: "@kiranacharyaa",
-          country: "Bangalore"
+          totalCups: 15
         },
         {
           points: "1,012",
           name: "John doe",
           position: "3rd",
           ig_username: "@johndoe",
-          country: "Bangalore"
+          totalCups: 10
         }
       ]
     };
@@ -69,7 +69,9 @@ export default {
   created() {
     const resultData = this.$route.params;
     console.log(`User ID: ${this.userid}`);
+    this.getLeaderBoard();
     this.startCountdown(); // Start the countdown timer
+
   },
   methods: {
     goToLandingPage() {
@@ -84,6 +86,9 @@ export default {
         }
       }, 1000);
     },
+    getLeaderBoard() {
+
+    }
   }
 };
 </script>
@@ -93,6 +98,9 @@ export default {
 body {
   background: #f9f9f9;
   font-family: "Roboto", sans-serif;
+  display: flex;
+  justify-content: center; /* Horizontally center the content */
+  align-items: center;
 }
 
 .main-content {
@@ -105,7 +113,7 @@ body {
   width: 400px;
   border-radius: 10px;
   color: white;
-  background-color: #3A7734 !important;
+  background-color: #038135 !important;
 }
 
 .small-print {

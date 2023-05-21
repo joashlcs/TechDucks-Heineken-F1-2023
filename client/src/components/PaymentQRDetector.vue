@@ -1,5 +1,5 @@
 <template>
-  <alert class="text-center" :message=message v-if="showMessage"></alert>
+  <alert class="text-center mb-2" :message=message v-if="showMessage"></alert>
   <div class="form-group">
     <video id="qrScanner2" class="qr-scanner-video"></video>
   </div>
@@ -14,7 +14,7 @@ export default {
   data() {
     return {
       user_id: '',
-      cup_id: '',
+      payment_id: '',
       scanner: null,
       message: '',
       showMessage: false,
@@ -32,7 +32,7 @@ export default {
   mounted() {
     setTimeout(() => {
       this.startScan();
-    }, 3000);
+    }, 1000);
   },
   beforeDestroy() {
     this.stopScan();
@@ -46,13 +46,13 @@ export default {
           return;
         }
         this.scanner = new QrScanner(video, result => {
-          this.cup_id = result.data;
+          this.payment_id = result.data;
 
-          if (this.user_id === this.cup_id) { // Check if cup belongs to user
+          if (this.user_id === this.payment_id) { // Check if cup belongs to user
             this.stopScan()
-            this.$router.push(`/reactiontest/${this.user_id}/consecutivebeer`);
+            this.$router.push(`/leaderboard/${this.user_id}`);
           } else {
-            this.message = 'Please place your own cup into the holder below';
+            this.message = 'Please use valid payment type!';
             this.showMessage = true;
             this.scanner.start();
             this.startScan();

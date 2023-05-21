@@ -1,40 +1,40 @@
 <template>
-  <div class="d-flex flex-column align-items-center" style="height: 100vh;">
+  <div class="d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
     <div class="logo">
       <img class="fit-picture" src="../assets/heineken.png"/>
     </div>
     <div v-if="result === 'passed'" class="text-center mt-1">
-      <b2>
+      <b>
         <h2>Congratulations,</h2>
         <h2>You're under 0.600s again!</h2>
-      </b2>
+      </b>
       <img class="gif" src="../assets/consecutivebeer.png" alt="Looping GIF" loop>
       <div class="m-3 mb-4 text-center">
         <div class="button-container">
-          <button class="btn-heineken-page background-heineken-green">TRY DRINKAID FOR FREE</button>
+          <button class="btn-heineken-page background-heineken-green" @click="drinkaid">TRY DRINKAID FOR FREE</button>
           <span class="vertical-center"><b>OR</b></span>
-          <button class="btn-heineken-second-option">GET NEXT CUP @ {{ percentageOff }}% OFF</button>
+          <button class="btn-heineken-second-option" @click="checkout">GET NEXT CUP @ {{ percentageOff }}% OFF</button>
         </div>
       </div>
     </div>
     <div v-else class="text-center mt-1">
-      <b2>
+      <b>
         <h2>Oh no, You're over 0.600s!</h2>
-      </b2>
+      </b>
       <img class="gif" src="../assets/warningcrash.png" alt="Car Crash Warning">
-      <b2>
+      <b>
         <h2 class="m-0">Don't Drive, Get DrinkAid</h2>
-      </b2>
+      </b>
       <div class="m-4 text-center">
         <div class="button-container">
-          <button class="btn-heineken-page background-heineken-green" >TRY DRINKAID FOR 30% OFF</button>
+          <button class="btn-heineken-page background-heineken-green" @click="drinkaid">TRY DRINKAID FOR 30% OFF</button>
           <span class="vertical-center"><b>OR</b></span>
           <button class="btn-heineken-third-option" @click="cancelButton">No Thanks</button>
         </div>
       </div>
     </div>
-    <div class="text-center">
-      <p>Psst... DrinkAid helps prevent hangovers!</p>
+    <div class="text-center mt-4">
+      <p>*Psst... DrinkAid helps prevent hangovers!</p>
     </div>
   </div>
 </template>
@@ -53,7 +53,8 @@ export default {
       result: null,
       timeLeft: 15,
       percentageOff: 10,
-      final_decision: null
+      final_decision: null,
+      product: "beer"
     };
   },
   components: {
@@ -105,8 +106,15 @@ export default {
           console.log(error)
         });
     },
-    getMessage() {
-      // Your existing code here
+    drinkaid() {
+      if (this.result === 'passed') {
+        this.$router.push(`/checkout/drinkaid/${this.userid}/free`)
+      } else {
+        this.$router.push(`/checkout/drinkaid/${this.userid}/discounted`)
+      }
+    },
+    checkout() {
+      this.$router.push(`/checkout/beer/${this.userid}/discounted`)
     },
     goToLandingPage() {
       this.$router.push('/');
@@ -191,6 +199,8 @@ h1 {
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: scale(1.2);
+  margin-top: 25px;
 }
 
 .vertical-center {

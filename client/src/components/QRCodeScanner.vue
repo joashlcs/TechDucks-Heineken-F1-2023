@@ -31,18 +31,18 @@ export default {
   },
   methods: {
     valid() {
-      if (this.user_id === null) {
+      if (this.user_id === '') {
         console.log("Missing document_id");
         return Promise.reject("Missing document_id");
       }
 
-      const payload = {
+      const payload_landing = {
         document_id: this.user_id,
         read: true
       };
       const path = `http://127.0.0.1:5000/${this.user_id}/cup-count`;
 
-      return axios.post(path, payload, {
+      return axios.post(path, payload_landing, {
         headers: {
           'Content-Type': 'application/json'
         }

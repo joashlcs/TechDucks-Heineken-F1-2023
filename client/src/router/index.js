@@ -7,6 +7,8 @@ import FirstBeer from "@/components/FirstBeer.vue";
 import ConsecutiveBeers from "@/components/ConsecutiveBeers.vue";
 import CupCollection from "@/components/CupCollection.vue";
 import Leaderboard from "@/components/Leaderboard.vue";
+import Payment from "@/components/Payment.vue";
+import Checkout from "@/components/Checkout.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -45,6 +47,16 @@ const router = createRouter({
     path: "/consecutivebeer/:id/:result",
     name: "consecutivebeer",
     component: ConsecutiveBeers
+    },
+    {
+    path: "/checkout/:product/:id/:discount",
+    name: "checkout",
+    component: Checkout
+    },
+    {
+    path: "/payment/:id/:type/:product/:price",
+    name: "payment",
+    component: Payment
     },
     {
     path: "/leaderboard/:id",

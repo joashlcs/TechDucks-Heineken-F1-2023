@@ -122,15 +122,15 @@ table = db['bonus']
 #     {'le 600ms': 1.10},
 #
 #     {'drinkaid': 0.5},
-#     {'penalty': 0.7}
-
-    # {'beer disc1': 0.9},
-    # {'beer disc2': 0.85},
-    # {'beer disc3^': 0.8}
-
-# ]
+#     {'penalty': 0.7},
 #
-# # Insert the document into the collection
+#     {'beer disc1': 0.9},
+#     {'beer disc2': 0.85},
+#     {'beer disc3^': 0.8}
+#
+# ]
+# #
+# # # Insert the document into the collection
 # table.insert_many(data)
 
 
@@ -448,15 +448,20 @@ def discount(document_id):
                 if beer_discount1 is not None:
                     final1 = price * beer_discount1
                     dd1 = round((1 - beer_discount1) * 100, 2)
-                    response = {"message": f"discount: {dd1}%\ndiscounted price: {final1}"}
+                    response = {
+                        "discount_percentage": dd1,
+                        "final_price": final1
+                    }
 
                     return jsonify(response)
 
                 else:
                     final = price * beer_discount
                     dd = round((1 - beer_discount) * 100, 2)
-                    response = {"message": f"discount: {dd}%\ndiscounted price: {final}"}
-
+                    response = {
+                        "discount_percentage": dd,
+                        "final_price": final
+                    }
                     return jsonify(response)
 
         else:
