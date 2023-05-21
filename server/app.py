@@ -1,4 +1,5 @@
 import json
+import qrcode
 
 from pymongo import MongoClient
 from bson import ObjectId
@@ -169,6 +170,22 @@ def store_data():
 
     return jsonify(response)
 
+# @app.route('/new-qr-code', methods=['POST'])
+# def new_qr():
+#     data = request.get_json()
+#     query = data.get('document_id')
+#
+#     result = collection.find_one(ObjectId(query))
+#
+#     if result:
+#         qr = qrcode.QRCode(version=1, box_size=10, border=4)
+#         qr.add_data(query)
+#         qr.make(fit=True)
+#         qr_img = qr.make_image(fill='black', back_color='white')
+#
+#         qr_img_id = collection.update_one({'content': content, 'qr_image': qr_img}).inserted_id
+#
+#         return jsonify({'qr_code_id': str(qr_img_id)}), 200
 @app.route('/update-data', methods=['POST'])
 def update_data():
     data = request.get_json()
@@ -480,7 +497,7 @@ def discount(document_id):
             return jsonify(response)
 
 
-app.route('/<document_id>/check-out', methods=['POST'])
+app.route('/<document_id>/checkout', methods=['POST'])
 def check_out(document_id):
     data = request.get_json()
 

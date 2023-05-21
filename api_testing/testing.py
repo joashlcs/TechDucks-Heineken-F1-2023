@@ -79,6 +79,28 @@ def db_request():
     # content = response.content
     print(f"Status Code: {status_code}") # f"Response Content: {content}")
 
+def new_qr_code():
+    url = "http://127.0.0.1:5000/new-qr-code"
+
+    # set the JSON req payload
+    payload = {
+        "document_id": str(ObjectId("64663cd81b4fb124d27861c2")),
+    }
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+    # send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload, headers=headers)
+
+    status_code = response.status_code
+    # content = response.content
+    print(f"Status Code: {status_code}")
+
 def update_request():
     url = "http://127.0.0.1:5000/update-data"
 
@@ -243,10 +265,10 @@ def checkoutbutton():
     payload = {
         "document_id": str(ObjectId("646658965fdece05d6082923")),
         # "button_id": "discount_beer_button"
-        "button_id": "freedrinkaid_button"
+        "button_id": "free_drinkaid_button"
     }
 
-    url = f'http://127.0.0.1:5000/{payload["document_id"]}/check-out'
+    url = f'http://127.0.0.1:5000/{payload["document_id"]}/checkout'
 
     headers = {
         "Content-Type": "application/json"
@@ -399,7 +421,7 @@ if __name__ == '__main__':
     # reaction_time()
     # bonus()
     # discount()
-    # checkoutbutton()
+    checkoutbutton()
     # checkoutbutton_fail()
     # leaderboard()
-    leaderboard_personal()
+    # leaderboard_personal()
