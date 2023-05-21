@@ -526,12 +526,39 @@ def check_out_fail(document_id):
             finald = price * da_discount
             ddd = round((1 - da_discount) * 100, 2)
 
-            responseaid = {"message": f"discount: {ddd}%\ndiscounted price: {finald}, Checked out successfully with discounted drinkaid"}
+            responseaid = {
+                "discount_percentage": ddd,
+                "final_price": finald
+            }
 
             return jsonify(responseaid), 200
     else:
         response401 = {"error": "Invalid data received"}
         return jsonify(response401), 400
+
+
+@app.route('/leaderboard', methods=['POST'])
+def leaderboard():
+    data = request.get_json()
+    button = data.get("button_id")
+
+    if button == "top_3":
+        sort_criteria = [('FirstName', 1), ('LastName', 1), ('total_points', 1)]
+        result = collection.find().sort(sort_criteria).limit(3)
+
+        # Clear existing ranks
+        collection.update_many({}, {'$unset': {'rank': 1}})
+
+        top3 = []
+        rank = 1
+        for document in result:
+            document_id = document['_id']
+            collection.update_one({'_id': document_id}, {'$set': {'rank': rank}})
+            rank += 1
+            top3.append(document)
+
+        response = {"top 3 in the leaderboard": top3}
+        return jsonify(response)
 
 if __name__ == '__main__':
     app.run()

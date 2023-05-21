@@ -199,7 +199,7 @@ def reaction_time():
 
 def bonus():
     payload = {
-        "document_id": str(ObjectId("646658965fdece05d6082923"))
+        "document_id": str(ObjectId("6469ac1e8cd8a56b8a1d6e43"))
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/bonus'
@@ -285,6 +285,29 @@ def checkoutbutton_fail():
     # content = response.content
     print(f"Status Code: {status_code}")
 
+def leaderboard():
+    payload = {
+        "button_id": "top_3"
+        # "button_id": "normal_beer_button"
+    }
+
+    url = 'http://127.0.0.1:5000/leaderboard'
+
+    headers = {
+        "Content-Type": "application/json"
+    }
+
+    # convert the payload to a JSON string
+    json_payload = json.dumps(payload)
+
+    # send the POST request with the JSON payload
+    response = requests.post(url, data=json_payload, headers=headers)
+
+    status_code = response.status_code
+    # content = response.content
+    print(f"Status Code: {status_code}")
+
+
 # def post_request():
 #     # set the URL of the API endpoint
 #     url = "http://127.0.0.1:5000/db/insertrun"
@@ -357,4 +380,5 @@ if __name__ == '__main__':
     # bonus()
     # discount()
     # checkoutbutton()
-    checkoutbutton_fail()
+    # checkoutbutton_fail()
+    leaderboard()
