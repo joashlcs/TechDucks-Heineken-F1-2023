@@ -18,105 +18,11 @@ class CustomJSONEncoder(json.JSONEncoder):
 app = Flask(__name__)
 app.json_encoder = CustomJSONEncoder
 
-# BOOKS = [
-#     {
-#         'id': uuid.uuid4().hex,
-#         'title': 'On the Road',
-#         'author': 'Jack Kerouac',
-#         'read': True
-#     },
-#     {
-#         'id': uuid.uuid4().hex,
-#         'title': 'Harry Potter and the Philosopher\'s Stone',
-#         'author': 'J. K. Rowling',
-#         'read': False
-#     },
-#     {
-#         'id': uuid.uuid4().hex,
-#         'title': 'Green Eggs and Ham',
-#         'author': 'Dr. Seuss',
-#         'read': True
-#     }
-# ]
 
 # instantiate the app
 app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
-# enable CORS
-#
-#
-# def remove_book(book_id):
-#     for book in BOOKS:
-#         if book['id'] == book_id:
-#             BOOKS.remove(book)
-#             return True
-#     return False
-#
-#
-# # sanity check route
-
-# @app.route('/ping', methods=['GET'])
-# def ping_pong():
-#     return jsonify('pong!')
-#
-#
-# @app.route('/books', methods=['GET', 'POST'])
-# def all_books():
-#     response_object = {'status': 'success'}
-#     print(response_object)
-#     if request.method == 'POST':
-#         post_data = request.get_json()
-#         BOOKS.append({
-#             'id': uuid.uuid4().hex,
-#             'title': post_data.get('title'),
-#             'author': post_data.get('author'),
-#             'read': post_data.get('read')
-#         })
-#         response_object['message'] = 'Book added!'
-#     else:
-#         response_object['books'] = BOOKS
-#     return jsonify(response_object)
-#
-#
-# @app.route('/books/<book_id>', methods=['PUT', 'DELETE'])
-# def single_book(book_id):
-#     print(request)
-#     response_object = {'status': 'success'}
-#     if request.method == 'PUT':
-#         post_data = request.get_json()
-#         remove_book(book_id)
-#         BOOKS.append({
-#             'id': uuid.uuid4().hex,
-#             'title': post_data.get('title'),
-#             'author': post_data.get('author'),
-#             'read': post_data.get('read')
-#         })
-#         response_object['message'] = 'Book updated!'
-#     if request.method == 'DELETE':
-#         remove_book(book_id)
-#         response_object['message'] = 'Book removed!'
-#     return jsonify(response_object)
-
-
-# @app.route('/qrcode', methods=['GET'])
-# def check_qr_code():
-#     qr_code = request.args.get('code')
-#
-#     # Query the database
-#     result = collection.find_one({'code': qr_code})
-#
-#     if result:
-#         # QR code exists
-#         response = {"exists": True}
-#         print("It exists, hooray")
-#     else:
-#         # QR code does not exist
-#         response = {"exists": False}
-#         collection.insert_one(qr_code)
-#         print("Nope. Not existing")
-#
-#     return jsonify(response)
 
 client = MongoClient('mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.2')  # Establish a connection to the MongoDB server
 db = client['clientbase']  # database
@@ -152,6 +58,7 @@ table = db['bonus']
 def store_data():
     data = request.get_json()
     query = {
+        "Username": data['Username'],
         "FirstName": data['FirstName'],
         "LastName": data['LastName'],
         "DOB": data['DOB'],
