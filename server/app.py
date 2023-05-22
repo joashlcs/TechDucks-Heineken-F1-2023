@@ -622,7 +622,12 @@ def leaderboard_personal(document_id):
             collection.update_one({'_id': ObjectId(document_ids)}, {'$set': {'rank': rank}})
 
         collect_rank = collection.find_one(ObjectId(document_id), {'rank': 1})
-        response = {'user rank': collect_rank}
+
+        if collect_rank and 'rank' in collect_rank:
+            rankie = collect_rank['rank']
+
+            response = {'user rank': rankie}
+
         return jsonify(response)
 
 
