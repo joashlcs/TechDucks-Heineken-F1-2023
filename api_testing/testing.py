@@ -421,7 +421,7 @@ if __name__ == '__main__':
     # getcup_request()  # get cup count
     # updatecup_request()  # increase cup count by 1
     # reaction_time()  # get reaction time, status: pass/fail
-    bonus()  # total points
+    # bonus()  # total points
     # discount()  # if pass: discounts for nth cup
     # checkoutbutton()  # if pass: check out
     # checkoutbutton_fail()  # if fail: check out
