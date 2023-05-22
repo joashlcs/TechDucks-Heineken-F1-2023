@@ -22,7 +22,13 @@
           <p class="card-text text-center" v-if="this.type !== 'beer'">Price: ${{ this.drinkaidPrice.toFixed(2) }}</p>
         </div>
       </div>
-      <div class="button-container">
+      <div v-if="this.type !== 'beer' && this.drinkaidDiscountType === 'free'" class="button-container">
+        <div class="button-wrapper">
+<!--          <button class="btn btn-primary-heineken btn-small" @click="cashlessMethod">Cash-less Payment</button>-->
+          <h3 class="btn btn-primary-heineken text-center">Dispensing Now,<br>Please Collect Below!</h3>
+        </div>
+      </div>
+      <div v-else class="button-container">
         <div class="button-wrapper">
           <button class="btn btn-primary-heineken btn-small" @click="cashlessMethod">Cash-less Payment</button>
           <span class="vertical-center"><b>OR</b></span>
@@ -47,6 +53,8 @@ export default {
       drinkaidDiscountType: null,
       userid: '',
       type: '',
+      timeLeft: 6,
+      landingPagePushed: false,
     }
   },
   created() {
@@ -61,8 +69,23 @@ export default {
     } else {
       this.drinkaidDiscount = 30;
     }
+    if (this.type !== 'beer' && this.drinkaidDiscountType === 'free') {
+      this.startCountdown();
+    }
   },
   methods: {
+    startCountdown() {
+      setInterval(() => {
+        if (this.timeLeft > 0) {
+          this.timeLeft--;
+        } else {
+          if (!this.landingPagePushed) {
+            this.landingPagePushed = true;
+            this.$router.push(`/leaderboard/${this.userid}`);
+          }
+        }
+      }, 1000);
+    },
     cashlessMethod () {
       let price;
       if (this.type === 'beer') {

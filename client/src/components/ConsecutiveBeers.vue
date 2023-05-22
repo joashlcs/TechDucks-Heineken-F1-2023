@@ -100,7 +100,6 @@ export default {
       this.cancelButttonAPI()
         .then((response) => {
           console.log("Rejected discounted Drinkaid")
-          console.log(response)
           this.$router.push('/');
         })
         .catch((error) => {
@@ -179,7 +178,7 @@ export default {
         button_id: "free_drinkaid_button",
         read: true
       };
-      const path = `http://127.0.0.1:5000/${this.userid}/check-out`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `http://127.0.0.1:5000/checkout/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
 
       return axios.post(path, payload, {
         headers: {
@@ -231,7 +230,7 @@ export default {
         button_id: "discount_beer_button",
         read: true
       };
-      const path = `http://127.0.0.1:5000/${this.userid}/check-out`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `http://127.0.0.1:5000/checkout/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
 
       return axios.post(path, payload, {
         headers: {
