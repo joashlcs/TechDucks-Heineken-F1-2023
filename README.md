@@ -21,7 +21,7 @@ Check out our live version & give it a try [here](https://testdriven.io/developi
     (env)$ flask run --port=5000
     ```
 
-    Flask Server is now running on [http://localhost:5000](http://localhost:5173)
+    Flask Server is now running on [Port:5000](http://localhost:5173)
 
 
 3. Download MongoDB as database. 
@@ -44,9 +44,83 @@ Check out our live version & give it a try [here](https://testdriven.io/developi
     $ npm run dev
     ```
 
-    Navigate to [http://localhost:5173](http://localhost:5173) to begin your fun!
+    Navigate to [live-demo-link](https://5173-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io) to begin your fun! 
 
-## RUNNING TESTS
+   Remember to click on inspect and resize your Chrome browser to 617px * 845px to recreate the kiosk's screen.
+    
+
+# **Testing**
+
+In this use-case, you will assume the role of an avid Heineken Beer Consumer at the F1 Singapore Grand Prix 2023! As you walk past the Heineken Booth, you see these interesting kiosks which offer you the possibility of getting some FREE beer. Thus, you design to further check it out. 
+
+As you walk into the queue, you are approached by the heineken staff to sign up for an account with Heineken. After signing-in, you are greeted with your personalized QR code. This QR code can be personalized and be recognised as your own digital art (Will come in Phase 2 under Further-Plans for finale). For the purpose of this testing, we have generated a few QR codes which u can use to test using mock data.
+
+Feel free to pick anyone one of the QR codes starting with the "Profile". You may find these under the project submission's screenshots section.
+
+As you finish personalizing your stunning QR code, you look up and see that the customer before you has just walked away with a 20% off discount. It's finally your turn in the line, so you eagerly rock up to the kiosk, determined to get your discounts too!
+
+<p align="center">
+  <img src="screenshots/landingpage.png" alt="Landing Page Screenshot" width="500">
+</p>
+
+This is the page you'll begin your fun-filled journey with! Here, you're prompted to scan that amazing QR code at the kiosk (for this test, show it to the screen for the camera to scan instead)
+
+As you're a new user, you'll be greeted with this F1 Themed Reaction Test!
+
+<p align="center">
+  <img src="screenshots/reactiontest.png" alt="Reaction Test Screenshot" width="500">
+</p>
+
+Are you ready to show the world your reaction time? If so, go ahead & press the green start button. When the 5 red lights go out, press finish to lock your time in. Be careful not to jump the start as you onlu have 3 attempts to ace this thing!
+
+<p align="center">
+  <img src="screenshots/firstbeerpassed.png" alt="First Time Beer Screenshot" width="500">
+</p>
+
+If you aced it, you're good and you'll be congratulated to get your first beer @ 10% at the stores! If not, we regret that you will not be able to get any discounts on the beer today as this campaign is all about finding and staying under our limits! No worries though, you can always try again tomorrow!
+
+Now, go on to enjoy that iced cold refreshing glass of Heineken beer! As you finish the cup, you can't wait to earn more discounts! So you are now heading back to the kiosk.
+
+Same as before, you're greeted with the landing page & you scan your QR code. 
+
+<p align="center">
+  <img src="screenshots/cupcollection.png" alt="Beer Cup Collection Screenshot" width="500">
+</p>
+
+But now, as you are a return user & we are trying to ensure sustainability, we would collect the cups back into the machine (For the test, do scan your profile QR code to mimic your cup being collected). Do your best @ the reaction tests again!
+
+<p align="center">
+  <img src="screenshots/consecutivefailed.png" alt="Consecutive Beer Failed Screenshot" width="500">
+</p>
+
+
+If you're over >0.600s which is the road legal guide, you'll see an option to decline any more beers, or you can choose to purchase a box of DrinkAid (our partners for this campaign) which can help to reduce the side-effects of hangovers.
+
+<p align="center">
+  <img src="screenshots/consecutivepassed.png" alt="Consecutive Beer Passed Screenshot" width="500">
+</p>
+
+If you're once again under, you've aced it champ! As a result, you can choose to reward yourself with more discounts on your next cup of Heineken Beer or choose to be wise and test out a single serving of DrinkAid for FREE!
+
+After you've made your decision, you'll find yourself at the Check Out page where you have 2 options, Cash or Cashless Payments!
+
+<p align="center">
+  <img src="screenshots/heinekencheckout.png" alt="Beer Checkout Passed Screenshot" width="500">
+</p>
+
+If you choose to pay via card, click on cashless payment & tap your card on the terminal (for this test, use the QR code titled Payment to mimic payment). After payment, a screen will notify you to collecy your cup (Coming in Phase 2 of Updates)! If you choose the card, click on cash payment and proceed to the stores!
+
+<p align="center">
+  <img src="screenshots/leaderboard.png" alt="Leaderboard Screenshot" width="500">
+</p>
+
+Once payment has been successful, you'll be brought to the leaderboard page which you'll be able to see the Top 3 as well as your current position & points. 
+
+Want to be on that leaderboard? Drink Up to earn more points but also stop before your limits to give yourself an added bonus! 
+
+See you on the leaderboard Ace! ⭐️⭐️⭐️
+
+## Detailed API Explanation for individual endpoints
 ### "store_data"
 _Function: Create a user profile in the database_
 
