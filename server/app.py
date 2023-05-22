@@ -1,4 +1,7 @@
+import base64
 import json
+from io import BytesIO
+
 import qrcode
 
 from pymongo import MongoClient
@@ -170,22 +173,34 @@ def store_data():
 
     return jsonify(response)
 
-# @app.route('/new-qr-code', methods=['POST'])
-# def new_qr():
-#     data = request.get_json()
-#     query = data.get('document_id')
-#
-#     result = collection.find_one(ObjectId(query))
-#
-#     if result:
-#         qr = qrcode.QRCode(version=1, box_size=10, border=4)
-#         qr.add_data(query)
-#         qr.make(fit=True)
-#         qr_img = qr.make_image(fill='black', back_color='white')
-#
-#         qr_img_id = collection.update_one({'content': content, 'qr_image': qr_img}).inserted_id
-#
-#         return jsonify({'qr_code_id': str(qr_img_id)}), 200
+@app.route('/new/qr-code', methods=['POST'])
+def new_qr():
+    data = request.get_json()
+    query = {
+        'document_id' : data['document_id']
+    }
+
+    result = collection.find_one({"_id": ObjectId(query['document_id'])}, {'qr_img': 1})
+
+    if result and 'qr_img' in result:
+        qr_img = result['qr_img']
+
+        return jsonify({'qr_code_id': str(qr_img)}), 200
+
+    else:  #make a qr code
+        qrc = qrcode.QRCode(version=1, box_size=10, border=4)
+        qrc.add_data(query)
+        qrc.make(fit=True)
+        qr_img = qrc.make_image(fill='black', back_color='white')
+        qr_img_byte_array = qr_img.get_image().tobytes()
+        qr_img_base64 = base64.b64encode(qr_img_byte_array).decode('utf-8')
+
+        qr_img.save(f"{query['document_id']}_qr.png")
+
+        collection.update_one({"_id": ObjectId(query['document_id'])}, {"$set": {'qr_img': qr_img_base64}})
+
+        return jsonify({'qr_code_id': str(qr_img_base64)}), 200
+
 @app.route('/update-data', methods=['POST'])
 def update_data():
     data = request.get_json()

@@ -80,11 +80,11 @@ def db_request():
     print(f"Status Code: {status_code}") # f"Response Content: {content}")
 
 def new_qr_code():
-    url = "http://127.0.0.1:5000/new-qr-code"
+    url = "http://127.0.0.1:5000/new/qr-code"
 
     # set the JSON req payload
     payload = {
-        "document_id": str(ObjectId("64663cd81b4fb124d27861c2")),
+        "document_id": str(ObjectId("6469ac1e8cd8a56b8a1d6e43")),
     }
 
     headers = {
@@ -101,12 +101,13 @@ def new_qr_code():
     # content = response.content
     print(f"Status Code: {status_code}")
 
+
 def update_request():
     url = "http://127.0.0.1:5000/update-data"
 
     # set the JSON req payload
     payload = {
-        "document_id": str(ObjectId("64663cd81b4fb124d27861c2")),
+        "document_id": str(ObjectId("646658965fdece05d6082923")),
         "FirstName": "Joash",
         "LastName": "Law",
         "DOB": "11-02-2003",
@@ -414,6 +415,7 @@ if __name__ == '__main__':
     # print(post_request())
 
     # db_request()
+    new_qr_code()
     # update_request()
     # delete_request()
     # getcup_request()
@@ -421,7 +423,7 @@ if __name__ == '__main__':
     # reaction_time()
     # bonus()
     # discount()
-    checkoutbutton()
+    # checkoutbutton()
     # checkoutbutton_fail()
     # leaderboard()
     # leaderboard_personal()
