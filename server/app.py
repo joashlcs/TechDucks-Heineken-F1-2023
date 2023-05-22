@@ -173,8 +173,8 @@ def store_data():
 
     return jsonify(response)
 
-@app.route('/new/qr-code', methods=['POST'])
-def new_qr():
+@app.route('/get/qr-code', methods=['POST'])
+def get_qr():
     data = request.get_json()
     query = {
         'document_id' : data['document_id']
@@ -401,7 +401,7 @@ def bonus_chart(document_id):
                     pt4 = r4[0].get("le 600ms")
                 return pt4
             else:
-                return 0
+                return 1
 
         def cup():
             points = None
@@ -445,7 +445,7 @@ def bonus_chart(document_id):
             collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
 
         else:
-            final, discount_percent = cup()
+            final, discount_percentage = cup()
             collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
 
     response = {"message": f"you have {final} points"}
@@ -512,7 +512,7 @@ def discount(document_id):
             return jsonify(response)
 
 
-app.route('/<document_id>/checkout', methods=['POST'])
+@app.route('/checkout/<document_id>', methods=['POST'])
 def check_out(document_id):
     data = request.get_json()
 
@@ -558,7 +558,7 @@ def check_out_fail(document_id):
         da_disc = table.find({"drinkaid": 0.5})
         resultsaid = []
         da_discount = 0
-        price = 10
+        price = 3.20
         for o in da_disc:
             resultsaid.append(o)
 

@@ -79,8 +79,8 @@ def db_request():
     # content = response.content
     print(f"Status Code: {status_code}") # f"Response Content: {content}")
 
-def new_qr_code():
-    url = "http://127.0.0.1:5000/new/qr-code"
+def get_qr_code():
+    url = "http://127.0.0.1:5000/get/qr-code"
 
     # set the JSON req payload
     payload = {
@@ -201,7 +201,7 @@ def updatecup_request():  # when they purchase a cup
 def reaction_time():
     payload = {
         "document_id": str(ObjectId("646658965fdece05d6082923")),
-        "time": 0.399
+        "time": 0.929
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/reaction-time'
@@ -222,7 +222,7 @@ def reaction_time():
 
 def bonus():
     payload = {
-        "document_id": str(ObjectId("6469ac1e8cd8a56b8a1d6e43"))
+        "document_id": str(ObjectId("646658965fdece05d6082923"))
     }
 
     url = f'http://127.0.0.1:5000/{payload["document_id"]}/bonus'
@@ -269,7 +269,7 @@ def checkoutbutton():
         "button_id": "free_drinkaid_button"
     }
 
-    url = f'http://127.0.0.1:5000/{payload["document_id"]}/checkout'
+    url = f'http://127.0.0.1:5000/checkout/{payload["document_id"]}'
 
     headers = {
         "Content-Type": "application/json"
@@ -414,16 +414,16 @@ if __name__ == '__main__':
     pass
     # print(post_request())
 
-    # db_request()
-    new_qr_code()
-    # update_request()
-    # delete_request()
-    # getcup_request()
-    # updatecup_request()
-    # reaction_time()
-    # bonus()
-    # discount()
-    # checkoutbutton()
-    # checkoutbutton_fail()
-    # leaderboard()
-    # leaderboard_personal()
+    # db_request()  # create profile
+    # get_qr_code()  # get qr code / create new qr code
+    # update_request()  # update profile details
+    # delete_request()  # delete profile
+    # getcup_request()  # get cup count
+    # updatecup_request()  # increase cup count by 1
+    # reaction_time()  # get reaction time, status: pass/fail
+    bonus()  # total points
+    # discount()  # if pass: discounts for nth cup
+    # checkoutbutton()  # if pass: check out
+    # checkoutbutton_fail()  # if fail: check out
+    # leaderboard()  # top3 leaderboard
+    # leaderboard_personal()  # personal position
