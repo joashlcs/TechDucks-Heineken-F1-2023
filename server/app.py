@@ -447,7 +447,7 @@ def bonus_chart(document_id):
             final, discount_percentage = cup()
             collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
 
-    response = {"message": f"you have {final} points"}
+    response = {"message": f"{final}"}
     return jsonify(response)
 
 @app.route('/<document_id>/discount', methods=['POST'])
@@ -593,19 +593,29 @@ def leaderboard():
         top3 = []
         rank = 0
         for document in result:
-            document_id = document['_id']
+            document_id = str(document['_id'])
             rank += 1
             collection.update_one({'_id': ObjectId(document_id)}, {'$set': {'rank': rank}})
             top3.append(document)
 
-        first = collection.find_one(top3[0])
-        second = collection.find_one(top3[1])
-        third = collection.find_one(top3[2])
+        response = {}
+        if len(top3) >= 1:
+            first = top3[0]
+            first['_id'] = str(first['_id'])
+            response["first"] = first
 
-        response = {"first in the leaderboard": first,
-                    "second in the leaderboard": second,
-                    "third in the leaderboard": third}
+        if len(top3) >= 2:
+            second = top3[1]
+            second['_id'] = str(second['_id'])
+            response["second"] = second
+
+        if len(top3) >= 3:
+            third = top3[2]
+            third['_id'] = str(third['_id'])
+            response["third"] = third
+
         return jsonify(response)
+
 
 @app.route('/leaderboard/<document_id>', methods=['POST'])
 def leaderboard_personal(document_id):
@@ -626,7 +636,7 @@ def leaderboard_personal(document_id):
         if collect_rank and 'rank' in collect_rank:
             rankie = collect_rank['rank']
 
-            response = {'user rank': rankie}
+            response = {'user_rank': f"{rankie}"}
 
         return jsonify(response)
 

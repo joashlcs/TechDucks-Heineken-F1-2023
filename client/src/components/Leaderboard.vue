@@ -27,7 +27,7 @@
       </div>
     </div>
     <div class="d-flex flex-column align-items-center mt-4">
-      <h3 class="text-center user p-2">Nice Try! You came in {{ this.position }}!</h3>
+      <h3 class="text-center user p-2">Nice! You're in P{{ this.position }}<br>with {{ this.points_user }} points!</h3>
     </div>
     <div class="d-flex flex-column align-items-center mt-3">
       <p class="small-print">Returning to home in {{ this.timeLeft }}s</p>
@@ -36,36 +36,32 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
-      position: "10th",
-      timeLeft: 10,
+      position: "10",
+      points_user: 120,
+      timeLeft: 1000,
       userid: '',
       landingPagePushed: false,
-      users: [
-        {
-          points: "1,051",
-          name: "Sandeep Sandy",
-          position: "2nd",
-          ig_username: "@sandeep",
-          totalCups: 13
-        },
-        {
-          points: "1,254",
-          name: "Kiran Acharya",
-          position: "1st",
-          ig_username: "@kiranacharyaa",
-          totalCups: 15
-        },
-        {
-          points: "1,012",
-          name: "John doe",
-          position: "3rd",
-          ig_username: "@johndoe",
-          totalCups: 10
-        }
-      ]
+      firstpoints: null,
+      firstname: null,
+      firstposition: 1,
+      firstig_username: null,
+      firsttotalCups: 0,
+      secondpoints: null,
+      secondname: null,
+      secondposition: 2,
+      secondig_username: null,
+      secondtotalCups: 0,
+      thirdpoints: null,
+      thirdname: null,
+      thirdposition: 3,
+      thirdig_username: null,
+      thirdtotalCups: 0,
+      users: []
     };
   },
   created() {
@@ -73,10 +69,35 @@ export default {
     this.userid = resultData.id;
     console.log(`User ID: ${this.userid}`);
     this.getLeaderBoard();
-    this.startCountdown(); // Start the countdown timer
+    this.startCountdown();
 
   },
   methods: {
+    updateUsers() {
+      this.users = [
+        {
+          points: this.secondpoints,
+          name: this.secondname,
+          position: this.secondposition,
+          ig_username: this.secondig_username,
+          totalCups: this.secondtotalCups
+        },
+        {
+          points: this.firstpoints,
+          name: this.firstname,
+          position: this.firstposition,
+          ig_username: this.firstig_username,
+          totalCups: this.firsttotalCups
+        },
+        {
+          points: this.thirdpoints,
+          name: this.thirdname,
+          position: this.thirdposition,
+          ig_username: this.thirdig_username,
+          totalCups: this.thirdtotalCups
+        }
+      ];
+    },
     goToLandingPage() {
       if (!this.landingPagePushed) {
         this.landingPagePushed = true;
@@ -92,8 +113,109 @@ export default {
         }
       }, 1000);
     },
+    updateLeaderBoard() {
+      this.getTop3()
+        .then((response) => {
+          const data = response.data;
+          const firstUser = data.first;
+          this.firstpoints = firstUser.final_point;
+          this.firstname = firstUser.FirstName;
+          this.firstig_username = "joash.law"
+          this.firsttotalCups = firstUser.cups;
+          const secondUser = data.second;
+          this.secondpoints = secondUser.final_point;
+          this.secondname = secondUser.FirstName;
+          this.secondig_username = "xxx.yyy"
+          this.secondtotalCups = secondUser.cups;
+          const thirdUser = data.third;
+          this.thirdpoints = thirdUser.final_point;
+          this.thirdname = thirdUser.FirstName;
+          this.thirdig_username = "xuan.zzz"
+          this.thirdtotalCups = thirdUser.cups;
+          console.log(firstUser)
+          console.log(this.users)
+          this.updateUsers();
+          console.log(thirdUser)
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+    },
     getLeaderBoard() {
+      this.getUsersPoints()
+      this.getUserPosition()
+      this.updateLeaderBoard()
+    },
+    getUsersPoints() {
+      if (this.userid === null) {
+        console.log("Missing userid");
+        return Promise.reject("Missing userid");
+      }
 
+      const payload = {
+        document_id: this.userid,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/${this.userid}/bonus`;
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          this.points_user = response.data.message;
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error;
+        });
+    },
+    getUserPosition() {
+      if (this.userid === null) {
+        console.log("Missing userid");
+        return Promise.reject("Missing userid");
+      }
+
+      const payload = {
+        document_id: this.userid,
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/leaderboard/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then((response) => {
+          this.position = response.data.user_rank;
+          return response;
+        })
+        .catch((error) => {
+          console.log(error);
+          throw error;
+        });
+    },
+    getTop3() {
+      const payload = {
+        button_id: "top_3",
+        read: true
+      };
+      const path = `http://127.0.0.1:5000/leaderboard`;
+
+      return axios.post(path, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+          .then((response) => {
+            return response;
+          })
+          .catch((error) => {
+            throw error;
+          });
     }
   }
 };
@@ -105,7 +227,7 @@ body {
   background: #f9f9f9;
   font-family: "Roboto", sans-serif;
   display: flex;
-  justify-content: center; /* Horizontally center the content */
+  justify-content: center;
   align-items: center;
 }
 
