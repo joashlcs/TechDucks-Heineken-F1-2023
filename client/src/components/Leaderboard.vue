@@ -43,7 +43,7 @@ export default {
     return {
       position: "10",
       points_user: 120,
-      timeLeft: 1000,
+      timeLeft: 10,
       userid: '',
       landingPagePushed: false,
       firstpoints: null,
@@ -120,17 +120,17 @@ export default {
           const firstUser = data.first;
           this.firstpoints = firstUser.final_point;
           this.firstname = firstUser.FirstName;
-          this.firstig_username = "joash.law"
+          this.firstig_username = firstUser.Username;
           this.firsttotalCups = firstUser.cups;
           const secondUser = data.second;
           this.secondpoints = secondUser.final_point;
           this.secondname = secondUser.FirstName;
-          this.secondig_username = "xxx.yyy"
+          this.secondig_username = secondUser.Username;
           this.secondtotalCups = secondUser.cups;
           const thirdUser = data.third;
           this.thirdpoints = thirdUser.final_point;
           this.thirdname = thirdUser.FirstName;
-          this.thirdig_username = "xuan.zzz"
+          this.thirdig_username = thirdUser.Username;
           this.thirdtotalCups = thirdUser.cups;
           console.log(firstUser)
           console.log(this.users)
