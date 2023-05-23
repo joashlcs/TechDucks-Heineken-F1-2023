@@ -82,7 +82,7 @@ export default {
         document_id: this.userid,
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/${this.userid}/cup-update`;
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/${this.userid}/cup-update`;
 
       return axios.post(path, payload_landing, {
         headers: {
@@ -128,7 +128,7 @@ export default {
         document_id: this.userid,
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/${this.userid}/discount`;
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/${this.userid}/discount`;
 
       return axios.post(path, payload_landing, {
         headers: {

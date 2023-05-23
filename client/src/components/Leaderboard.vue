@@ -151,7 +151,7 @@ export default {
           const data = response.data;
           const firstUser = data.first;
           if (typeof firstUser.final_point !== 'undefined') {
-            this.firstpoints = firstUser.final_point;
+            this.firstpoints = parseFloat(firstUser.final_point).toFixed(0);
           } else {
             this.firstpoints = 0;
           }
@@ -163,9 +163,8 @@ export default {
             this.firsttotalCups = 0;
           }
           const secondUser = data.second;
-          this.secondpoints = secondUser.final_point;
           if (typeof secondUser.final_point !== 'undefined') {
-            this.secondpoints = secondUser.final_point;
+            this.secondpoints = parseFloat(secondUser.final_point).toFixed(0);
           } else {
             this.secondpoints = 0;
           }
@@ -178,7 +177,8 @@ export default {
           }
           const thirdUser = data.third;
           if (typeof thirdUser.final_point !== 'undefined') {
-            this.thirdpoints = thirdUser.final_point;
+            this.thirdpoints = parseFloat(thirdUser.final_point).toFixed(0);
+            console.log(typeof this.thirdpoints)
           } else {
             this.thirdpoints = 0;
           }
@@ -243,7 +243,7 @@ export default {
         document_id: this.userid,
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/${this.userid}/bonus`;
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/${this.userid}/bonus`;
 
       return axios.post(path, payload, {
         headers: {
@@ -269,7 +269,7 @@ export default {
         document_id: this.userid,
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/leaderboard/${this.userid}`; 
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/leaderboard/${this.userid}`;
 
       return axios.post(path, payload, {
         headers: {
@@ -278,7 +278,8 @@ export default {
       })
         .then((response) => {
           this.position = response.data.user_rank;
-          this.points_user = response.data.user_point;
+          const point = response.data.user_point
+          this.points_user = parseFloat(point).toFixed(0);
           console.log(this.position)
           console.log(this.points_user)
           return response;
@@ -293,7 +294,7 @@ export default {
         button_id: "top_3",
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/leaderboard`;
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/leaderboard`;
 
       return axios.post(path, payload, {
         headers: {

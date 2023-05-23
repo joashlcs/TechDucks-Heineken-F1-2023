@@ -110,7 +110,7 @@ def getcup_request():  # first scan at kiosk
     }
 
     # set the JSON req payload
-    url = f'http://127.0.0.1:5000/{payload["document_id"]}/cup-count'
+    url = f'https://techducks-api-app-drhnv.ondigitalocean.app/{payload["document_id"]}/cup-count'
 
     headers = {
         "Content-Type": "application/json"
@@ -121,6 +121,10 @@ def getcup_request():  # first scan at kiosk
 
     # send the POST request with the JSON payload
     response = requests.post(url, data=json_payload, headers=headers)
+
+    data = response.json
+
+    print(data)
 
     status_code = response.status_code
     # content = response.content

@@ -80,7 +80,7 @@ export default {
         button_id: "normal_beer_button",
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/${this.userid}/check-out-false`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/${this.userid}/check-out-false`; // Call API to update final buying decision of drinkaid after consecutive failing
 
       return axios.post(path, payload, {
         headers: {
@@ -152,7 +152,7 @@ export default {
         document_id: this.userid,
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/${this.userid}/discount`;
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/${this.userid}/discount`;
 
       return axios.post(path, payload_landing, {
         headers: {
@@ -178,7 +178,7 @@ export default {
         button_id: "free_drinkaid_button",
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/checkout/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/checkout/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
 
       return axios.post(path, payload, {
         headers: {
@@ -204,7 +204,7 @@ export default {
         button_id: "discount_drinkaid_button",
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/${this.userid}/check-out-false`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/${this.userid}/check-out-false`; // Call API to update final buying decision of drinkaid after consecutive failing
 
       return axios.post(path, payload, {
         headers: {
@@ -230,7 +230,7 @@ export default {
         button_id: "discount_beer_button",
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/checkout/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `https://techducks-api-app-drhnv.ondigitalocean.app/checkout/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
 
       return axios.post(path, payload, {
         headers: {
