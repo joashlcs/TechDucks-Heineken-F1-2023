@@ -1,3 +1,5 @@
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 import base64
 import json
 
@@ -24,11 +26,15 @@ app.config.from_object(__name__)
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 
-client = MongoClient('mongodb://127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+1.8.2')  # Establish a connection to the MongoDB server
-db = client['clientbase']  # database
-collection = db['users']
 
+uri = "mongodb+srv://joashlaw75:ZYBr2Mz755fjfKsy@techduckss.djmyure.mongodb.net/?retryWrites=true&w=majority"
+
+# Create a new client and connect to the server
+client = MongoClient(uri, server_api=ServerApi('1'))
+db = client['clientbase']
+collection = db['users']
 table = db['bonus']
+
 # data = [
 #     {'glass 1': 10},
 #     {'glass 2': 12},

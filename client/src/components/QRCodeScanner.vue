@@ -40,7 +40,7 @@ export default {
         document_id: this.user_id,
         read: true
       };
-      const path = `http://127.0.0.1:5000/${this.user_id}/cup-count`;
+      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/${this.user_id}/cup-count`;
 
       return axios.post(path, payload_landing, {
         headers: {
