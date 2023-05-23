@@ -3,34 +3,67 @@
     <div class="d-flex flex-column align-items-center logo mt-5">
       <img class="fit-picture" src="../assets/heineken.png"/>
     </div>
-    <h1 class="text-center">Here are our Top 3 Leaderboard!</h1>
-    <br><br>
-    <div class="row">
-      <div v-for="(user, index) in users" :key="index" class="col-sm-4">
-        <div :class="['leaderboard-card', {'leaderboard-card--first': index === 1}]">
-          <div class="leaderboard-card__top">
-            <h3 class="text-center">{{ user.points }}</h3>
-          </div>
-          <div class="leaderboard-card__body">
-            <div class="text-center">
-              <img src="../assets/defaultUser.png" class="circle-img mb-2 bg-white" :alt="user.name">
-              <h3>{{ user.position }}</h3>
-              <h5 class="mb-0">{{ user.name }}</h5>
-              <p class="text-muted mt-1 mb-0">@{{ user.ig_username }}</p>
-              <hr>
-              <div class="d-flex justify-content-center align-items-center flex-column">
-                <span><i class="fa fa-map-marker"></i> {{ user.totalCups }} Cups</span>
+    <div v-if="this.status_loading === false">
+      <div class="svg-container">
+        <svg class="ip" viewBox="0 0 256 128" width="256px" height="128px" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="grad1" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#5ebd3e" />
+              <stop offset="33%" stop-color="#ffb900" />
+              <stop offset="67%" stop-color="#f78200" />
+              <stop offset="100%" stop-color="#e23838" />
+            </linearGradient>
+            <linearGradient id="grad2" x1="1" y1="0" x2="0" y2="0">
+              <stop offset="0%" stop-color="#e23838" />
+              <stop offset="33%" stop-color="#973999" />
+              <stop offset="67%" stop-color="#009cdf" />
+              <stop offset="100%" stop-color="#5ebd3e" />
+            </linearGradient>
+          </defs>
+          <g fill="none" :stroke-linecap="strokeLinecap" :stroke-width="strokeWidth">
+            <g class="ip__track" :stroke="trackStrokeColor">
+              <path :d="trackPath" />
+              <path :d="reverseTrackPath" />
+            </g>
+            <g :stroke-dasharray="dashArray">
+              <path class="ip__worm1" :stroke="worm1StrokeColor" :stroke-dashoffset="worm1DashOffset" :d="trackPath" />
+              <path class="ip__worm2" :stroke="worm2StrokeColor" :stroke-dashoffset="worm2DashOffset" :d="reverseTrackPath" />
+            </g>
+          </g>
+        </svg>
+      </div>
+      <h2 class="text-center margin-top">Loading...</h2>
+    </div>
+    <div v-else>
+      <h1 class="text-center">Here are our Top 3 Leaderboard!</h1>
+      <br><br>
+      <div class="row">
+        <div v-for="(user, index) in users" :key="index" class="col-sm-4">
+          <div :class="['leaderboard-card', {'leaderboard-card--first': index === 1}]">
+            <div class="leaderboard-card__top">
+              <h3 class="text-center">{{ user.points }}</h3>
+            </div>
+            <div class="leaderboard-card__body">
+              <div class="text-center">
+                <img src="../assets/defaultUser.png" class="circle-img mb-2 bg-white" :alt="user.name">
+                <h3>{{ user.position }}</h3>
+                <h5 class="mb-0">{{ user.name }}</h5>
+                <p class="text-muted mt-1 mb-0">@{{ user.ig_username }}</p>
+                <hr>
+                <div class="d-flex justify-content-center align-items-center flex-column">
+                  <span><i class="fa fa-map-marker"></i> {{ user.totalCups }} Cups</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="d-flex flex-column align-items-center mt-4">
-      <h3 class="text-center user p-2">Nice! You're in P{{ this.position }}<br>with {{ this.points_user }} points!</h3>
-    </div>
-    <div class="d-flex flex-column align-items-center mt-3">
-      <p class="small-print">Returning to home in {{ this.timeLeft }}s</p>
+      <div class="d-flex flex-column align-items-center mt-4">
+        <h3 class="text-center user p-2">Nice! You're in P{{ this.position }}<br>with {{ this.points_user }} points!</h3>
+      </div>
+      <div class="d-flex flex-column align-items-center mt-3">
+        <p class="small-print">Returning to home in {{ this.timeLeft }}s</p>
+      </div>
     </div>
   </div>
 </template>
@@ -41,6 +74,7 @@ import axios from "axios";
 export default {
   data() {
     return {
+      status_loading: false,
       position: "0",
       points_user: 0,
       timeLeft: 1000,
@@ -171,6 +205,7 @@ export default {
       setTimeout(() => {
         this.getUserPosition();
         this.updateLeaderBoard();
+        this.status_loading = true;
       }, 2000);
     },
     getUsersPoints() {
@@ -247,6 +282,38 @@ export default {
             throw error;
           });
     }
+  },
+  computed: {
+    strokeLinecap() {
+      return "round";
+    },
+    strokeWidth() {
+      return "16";
+    },
+    trackStrokeColor() {
+      return "#ddd";
+    },
+    worm1StrokeColor() {
+      return "url(#grad1)";
+    },
+    worm2StrokeColor() {
+      return "url(#grad2)";
+    },
+    dashArray() {
+      return "180 656";
+    },
+    worm1DashOffset() {
+      return "0";
+    },
+    worm2DashOffset() {
+      return "358";
+    },
+    trackPath() {
+      return "M8,64s0-56,60-56,60,112,120,112,60-56,60-56";
+    },
+    reverseTrackPath() {
+      return "M248,64s0-56-60-56-60,112-120,112S8,64,8,64";
+    },
   }
 };
 </script>
@@ -348,5 +415,107 @@ img.circle-img.circle-img--small {
 }
 .table tbody tr td:nth-last-child(1) {
   border-radius: 0 5px 5px 0;
+}
+
+.svg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 150px;
+}
+
+* {
+  border: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --hue: 223;
+  --bg: hsl(var(--hue), 90%, 95%);
+  --fg: hsl(var(--hue), 90%, 5%);
+  --trans-dur: 0.3s;
+  font-size: calc(16px + (24 - 16) * (100vw - 320px) / (1280 - 320));
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font: 1em/1.5 sans-serif;
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  transition: background-color var(--trans-dur);
+}
+
+main {
+  padding: 1.5em 0;
+}
+
+.ip {
+  width: 16em;
+  height: 8em;
+}
+
+.ip__track {
+  stroke: hsl(var(--hue), 90%, 90%);
+  transition: stroke var(--trans-dur);
+}
+
+.ip__worm1,
+.ip__worm2 {
+  animation: worm1 2s linear infinite;
+}
+
+.ip__worm2 {
+  animation-name: worm2;
+}
+
+/* Dark theme */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: hsl(var(--hue), 90%, 5%);
+    --fg: hsl(var(--hue), 90%, 95%);
+  }
+
+  .ip__track {
+    stroke: hsl(var(--hue), 90%, 15%);
+  }
+}
+
+/* Animation */
+@keyframes worm1 {
+  from {
+    stroke-dashoffset: 0;
+  }
+  50% {
+    animation-timing-function: steps(1);
+    stroke-dashoffset: -358;
+  }
+  50.01% {
+    animation-timing-function: linear;
+    stroke-dashoffset: 358;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes worm2 {
+  from {
+    stroke-dashoffset: 358;
+  }
+  50% {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -358;
+  }
+}
+
+.margin-top {
+  margin-top: 150px;
+  font-size: 3rem;
 }
 </style>
