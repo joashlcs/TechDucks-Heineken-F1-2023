@@ -313,7 +313,7 @@ if __name__ == '__main__':
     # get_qr_code()  # get qr code / create new qr code
     # update_request()  # update profile details
     # delete_request()  # delete profile
-    # getcup_request()  # get cup count
+    getcup_request()  # get cup count
     # updatecup_request()  # increase cup count by 1
     # reaction_time()  # get reaction time, status: pass/fail
     # bonus()  # total points

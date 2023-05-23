@@ -256,6 +256,8 @@ def bonus_chart(document_id):
     }
 
     document = collection.find_one(ObjectId(document_id))
+
+
     if document:
         current_cups = document.get('cups', 0)
         time2 = document.get('time', 0)
@@ -346,9 +348,12 @@ def bonus_chart(document_id):
                 bonus_multiplier = check_timing(time2, table)
                 if points is not None:
                     final = bonus_multiplier * points
+                    final = round(final, 2)
+
                     return final, bonus_multiplier
                 else:
                     final = bonus_multiplier * points_5
+                    final = round(final, 2)
                     return final, bonus_multiplier
 
         final, discount_percentage = cup()
@@ -405,6 +410,7 @@ def discount(document_id):
             if beer_discount or beer_discount1:
                 if beer_discount1 is not None:
                     final1 = price * beer_discount1
+                    final1 = round(final1, 2)
                     dd1 = round((1 - beer_discount1) * 100, 2)
                     response = {
                         "discount_percentage": dd1,
@@ -415,6 +421,7 @@ def discount(document_id):
 
                 else:
                     final = price * beer_discount
+                    final = round(final, 2)
                     dd = round((1 - beer_discount) * 100, 2)
                     response = {
                         "discount_percentage": dd,

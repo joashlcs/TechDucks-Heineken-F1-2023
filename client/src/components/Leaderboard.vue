@@ -77,7 +77,7 @@ export default {
       status_loading: false,
       position: "0",
       points_user: 0,
-      timeLeft: 1000,
+      timeLeft: 10,
       userid: '',
       landingPagePushed: false,
       firstpoints: null,
@@ -102,8 +102,7 @@ export default {
     const resultData = this.$route.params;
     this.userid = resultData.id;
     console.log(`User ID: ${this.userid}`);
-    this.getLeaderBoard();
-    this.startCountdown();
+    this.getLeaderBoard()
   },
   methods: {
     updateUsers() {
@@ -201,11 +200,37 @@ export default {
     },
     async getLeaderBoard() {
       console.log("Bonus Point Ran");
-      await this.getUsersPoints();
-      setTimeout(() => {
-        this.getUserPosition();
-        this.updateLeaderBoard();
-        this.status_loading = true;
+      let success = true;
+
+      try {
+        await this.getUsersPoints();
+      } catch (error) {
+        console.error("Error getting user points:", error);
+        success = false;
+      }
+
+      setTimeout(async () => {
+        if (success) {
+          try {
+            await this.getUserPosition();
+            await this.updateLeaderBoard();
+          } catch (error) {
+            if (error instanceof axios.AxiosError) {
+              console.error("Error updating leaderboard:", error);
+              success = false;
+            }
+          }
+        }
+
+        if (success) {
+          setTimeout(() => {
+            this.status_loading = true;
+            this.startCountdown();
+          }, 2000);
+        } else {
+          console.log("Reloading page...");
+          window.location.reload();
+        }
       }, 2000);
     },
     getUsersPoints() {
