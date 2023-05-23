@@ -5,13 +5,25 @@
 
 #### This marketing campaign has been developed to encourage f1-goers to enjoy their beer in a responsible way! By getting to know their limit through our fun & interactive reaction test, they wil begin to be more conscious of their drinking limits. As a result, they will become much safer when drinking!
 
-Check out our live version & give it a try [here](https://testdriven.io/developing-a-single-page-app-with-flask-and-vuejs)!
+Check out our live version & give it a try [here](https://deft-sunshine-83e183.netlify.app/)!
 
 ## SETTING UP
 
 1. Clone this project into your preferred IDE
 
-2. Run the server-side Flask app in one terminal window:
+2. Run the client-side Vue app in a different terminal window:
+
+    ```sh
+    $ cd client
+    $ npm install
+    $ npm run dev
+    ```
+
+    Navigate to [LocalHost:5173](http://localhost:5173) or whichever port your using to begin your fun! 
+
+3. Remember to click on inspect and resize your Chrome browser to 617px * 845px to recreate the kiosk's screen.
+    
+4. To test the Local api, run the server-side Flask app in one terminal window:
 
     ```sh
     $ cd server
@@ -21,33 +33,7 @@ Check out our live version & give it a try [here](https://testdriven.io/developi
     (env)$ flask run --port=5000
     ```
 
-    Flask Server is now running on [Port:5000](http://localhost:5173)
-
-
-3. Download MongoDB as database. 
-
-   If you are on MacOS:
-
-   - install [Homebrew](https://brew.sh)
-   - install MongoDB through this [link](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-os-x/)
-
-   If you are on Windows:
-
-   - install MongoDB through this [link](https://www.mongodb.com/docs/manual/tutorial/install-mongodb-on-windows/)
-
-
-4. Run the client-side Vue app in a different terminal window:
-
-    ```sh
-    $ cd client
-    $ npm install
-    $ npm run dev
-    ```
-
-    Navigate to [live-demo-link](https://5173-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io) to begin your fun! 
-
-   Remember to click on inspect and resize your Chrome browser to 617px * 845px to recreate the kiosk's screen.
-    
+    Flask Server is now running on [Port:5000](http://localhost:5000)
 
 # **Testing**
 
