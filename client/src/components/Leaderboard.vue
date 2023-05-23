@@ -16,7 +16,7 @@
               <img src="../assets/defaultUser.png" class="circle-img mb-2 bg-white" :alt="user.name">
               <h3>{{ user.position }}</h3>
               <h5 class="mb-0">{{ user.name }}</h5>
-              <p class="text-muted mt-1 mb-0">{{ user.ig_username }}</p>
+              <p class="text-muted mt-1 mb-0">@{{ user.ig_username }}</p>
               <hr>
               <div class="d-flex justify-content-center align-items-center flex-column">
                 <span><i class="fa fa-map-marker"></i> {{ user.totalCups }} Cups</span>
@@ -41,9 +41,9 @@ import axios from "axios";
 export default {
   data() {
     return {
-      position: "10",
-      points_user: 120,
-      timeLeft: 10,
+      position: "0",
+      points_user: 0,
+      timeLeft: 1000,
       userid: '',
       landingPagePushed: false,
       firstpoints: null,
@@ -70,7 +70,6 @@ export default {
     console.log(`User ID: ${this.userid}`);
     this.getLeaderBoard();
     this.startCountdown();
-
   },
   methods: {
     updateUsers() {
@@ -118,22 +117,47 @@ export default {
         .then((response) => {
           const data = response.data;
           const firstUser = data.first;
-          this.firstpoints = firstUser.final_point;
+          if (typeof firstUser.final_point !== 'undefined') {
+            this.firstpoints = firstUser.final_point;
+          } else {
+            this.firstpoints = 0;
+          }
           this.firstname = firstUser.FirstName;
           this.firstig_username = firstUser.Username;
-          this.firsttotalCups = firstUser.cups;
+          if (typeof firstUser.cups !== 'undefined') {
+            this.firsttotalCups = firstUser.cups;
+          } else {
+            this.firsttotalCups = 0;
+          }
           const secondUser = data.second;
           this.secondpoints = secondUser.final_point;
+          if (typeof secondUser.final_point !== 'undefined') {
+            this.secondpoints = secondUser.final_point;
+          } else {
+            this.secondpoints = 0;
+          }
           this.secondname = secondUser.FirstName;
           this.secondig_username = secondUser.Username;
-          this.secondtotalCups = secondUser.cups;
+          if (typeof secondUser.cups !== 'undefined') {
+            this.secondtotalCups = secondUser.cups;
+          } else {
+            this.secondtotalCups = 0;
+          }
           const thirdUser = data.third;
-          this.thirdpoints = thirdUser.final_point;
+          if (typeof thirdUser.final_point !== 'undefined') {
+            this.thirdpoints = thirdUser.final_point;
+          } else {
+            this.thirdpoints = 0;
+          }
           this.thirdname = thirdUser.FirstName;
           this.thirdig_username = thirdUser.Username;
-          this.thirdtotalCups = thirdUser.cups;
+          if (typeof thirdUser.cups !== 'undefined') {
+            this.thirdtotalCups = thirdUser.cups;
+          } else {
+            this.thirdtotalCups = 0;
+          }
           console.log(firstUser)
-          console.log(this.users)
+          console.log(secondUser)
           this.updateUsers();
           console.log(thirdUser)
         })
@@ -141,10 +165,13 @@ export default {
           console.log(error);
         })
     },
-    getLeaderBoard() {
-      this.getUsersPoints()
-      this.getUserPosition()
-      this.updateLeaderBoard()
+    async getLeaderBoard() {
+      console.log("Bonus Point Ran");
+      await this.getUsersPoints();
+      setTimeout(() => {
+        this.getUserPosition();
+        this.updateLeaderBoard();
+      }, 2000);
     },
     getUsersPoints() {
       if (this.userid === null) {
@@ -164,7 +191,7 @@ export default {
         }
       })
         .then((response) => {
-          this.points_user = response.data.message;
+          console.log("Bonus Point Calculation Finish")
           return response;
         })
         .catch((error) => {
@@ -182,7 +209,7 @@ export default {
         document_id: this.userid,
         read: true
       };
-      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/leaderboard/${this.userid}`; // Call API to update final buying decision of drinkaid after consecutive failing
+      const path = `https://5000-joashlaw75-techducks-htn4hymsh8o.ws-us97.gitpod.io/leaderboard/${this.userid}`; 
 
       return axios.post(path, payload, {
         headers: {
@@ -191,6 +218,9 @@ export default {
       })
         .then((response) => {
           this.position = response.data.user_rank;
+          this.points_user = response.data.user_point;
+          console.log(this.position)
+          console.log(this.points_user)
           return response;
         })
         .catch((error) => {

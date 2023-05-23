@@ -9,6 +9,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+import time
 
 
 class CustomJSONEncoder(json.JSONEncoder):
@@ -232,14 +233,14 @@ def reaction_time(document_id):
 
     if document:
         # Get the cup count
-        time = data["time"]
-        status = time < 0.6
+        time2 = data["time"]
+        status = time2 < 0.6
         if status:
             response = {"status": "passed"}
         else:
             response = {"status": "failed"}
 
-        collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"status": status, "time": time}})
+        collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"status": status, "time": time2}})
         return jsonify(response)
 
     else:
@@ -257,11 +258,11 @@ def bonus_chart(document_id):
     document = collection.find_one(ObjectId(document_id))
     if document:
         current_cups = document.get('cups', 0)
-        time = document.get('time', 0)
+        time2 = document.get('time', 0)
         table = db['bonus']
 
-        def check_timing(time, table):
-            if time < 0.150:
+        def check_timing(time2, table):
+            if time2 < 0.150:
                 pt1 = None
                 q1 = {"le 150ms": {'$exists': True}}
                 cur1 = table.find(q1)
@@ -274,7 +275,7 @@ def bonus_chart(document_id):
                     pt1 = r1[0].get("le 150ms")
                 return pt1
 
-            elif 0.151 <= time <= 0.250:
+            elif 0.151 <= time2 <= 0.250:
                 pt2 = None
                 q2 = {"le 250ms": {'$exists': True}}
                 cur2 = table.find(q2)
@@ -287,7 +288,7 @@ def bonus_chart(document_id):
                     pt2 = r2[0].get("le 250ms")
                 return pt2
 
-            elif 0.251 <= time <= 0.400:
+            elif 0.251 <= time2 <= 0.400:
                 pt3 = None
                 q3 = {"le 400ms": {'$exists': True}}
                 cur3 = table.find(q3)
@@ -300,7 +301,7 @@ def bonus_chart(document_id):
                     pt3 = r3[0].get("le 400ms")
                 return pt3
 
-            elif 0.401 <= time <= 0.600:
+            elif 0.401 <= time2 <= 0.600:
                 pt4 = None
                 q4 = {"le 600ms": {'$exists': True}}
                 cur4 = table.find(q4)
@@ -331,34 +332,36 @@ def bonus_chart(document_id):
                 if result:
                     points = result[0].get(glass_name)
 
-            elif current_cups >= 6:
+            elif current_cups >= 5:
                 c = table.find({"glass 5^": 25})
                 results = []
-                points_6 = 0
+                points_5 = 0
                 for docs in c:
                     results.append(docs)
 
                 if results:
-                    points_6 = results[0].get('glass 5^')
+                    points_5 = results[0].get('glass 5^')
 
-            if points or points_6:
-                bonus_multiplier = check_timing(time, table)
+            if points or points_5:
+                bonus_multiplier = check_timing(time2, table)
                 if points is not None:
                     final = bonus_multiplier * points
                     return final, bonus_multiplier
                 else:
-                    final = bonus_multiplier * points_6
+                    final = bonus_multiplier * points_5
                     return final, bonus_multiplier
 
-        fpoint = document.get('final_point', 0)
-        if fpoint != 0:  # there is alr a prev record
-            pt_update, discount_percent = cup()
-            final = fpoint + pt_update
+        final, discount_percentage = cup()
+        if final and discount_percentage is not None:
             collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
+            for i in range(5):
+                check = collection.find_one({"_id": ObjectId(query["document_id"])}, {"final_point": 1})
+                if check == final:
+                    break
+                else:
+                    time.sleep(1)
+                    continue
 
-        else:
-            final, discount_percentage = cup()
-            collection.update_one({"_id": ObjectId(query["document_id"])}, {"$set": {"final_point": final}})
 
     response = {"message": f"{final}"}
     return jsonify(response)
@@ -544,15 +547,16 @@ def leaderboard_personal(document_id):
             rank += 1
             collection.update_one({'_id': ObjectId(document_ids)}, {'$set': {'rank': rank}})
 
-        collect_rank = collection.find_one(ObjectId(document_id), {'rank': 1})
+        collect_rank = collection.find_one(ObjectId(document_id), {'rank': 1,'final_point': 1})
 
-        if collect_rank and 'rank' in collect_rank:
+        if collect_rank and 'rank' in collect_rank and 'final_point' in collect_rank:
             rankie = collect_rank['rank']
+            pointie = collect_rank['final_point']
 
-            response = {'user_rank': f"{rankie}"}
+            response = {'user_rank': f"{rankie}",
+                        'user_point': f"{pointie}"}
 
         return jsonify(response)
-
 
 if __name__ == '__main__':
     app.run()

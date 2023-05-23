@@ -63,6 +63,7 @@ export default {
       .then((response) => {
         const data = response.data;
         this.percentageOff = data.discount_percentage;
+        console.log(data)
         console.log(this.percentageOff)
       })
       .catch((error) => {
